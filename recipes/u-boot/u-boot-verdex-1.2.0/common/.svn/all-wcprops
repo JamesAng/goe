@@ -1,0 +1,137 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/gumstix-buildroot/!svn/ver/1533/trunk/target/arm/u-boot/common
+END
+compact-flash.patch
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/gumstix-buildroot/!svn/ver/1510/trunk/target/arm/u-boot/common/compact-flash.patch
+END
+kernel-at-top.patch
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/kernel-at-top.patch
+END
+pxa-sd-driver.patch
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/gumstix-buildroot/!svn/ver/1533/trunk/target/arm/u-boot/common/pxa-sd-driver.patch
+END
+gumstix-otp-serial-programmer.patch
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/gumstix-otp-serial-programmer.patch
+END
+add-gumstix-board-to-build.patch
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/add-gumstix-board-to-build.patch
+END
+fat-bss-reduction.patch
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/fat-bss-reduction.patch
+END
+gcc-40-fixups.patch
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/gcc-40-fixups.patch
+END
+ethernet-fixups.patch
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/ethernet-fixups.patch
+END
+autoscript.patch
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/autoscript.patch
+END
+loadb-safe.patch
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/loadb-safe.patch
+END
+fw_printenv.patch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/fw_printenv.patch
+END
+pxa-serial-highspeed.patch
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/pxa-serial-highspeed.patch
+END
+flash-protect-fixup.patch
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/flash-protect-fixup.patch
+END
+move-examples-address.patch
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/move-examples-address.patch
+END
+crc-warning-not-so-scary.patch
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/crc-warning-not-so-scary.patch
+END
+install.patch
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/install.patch
+END
+jffs2-new-nodetypes.patch
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/jffs2-new-nodetypes.patch
+END
+do-not-build-examples.patch
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/do-not-build-examples.patch
+END
+osx.patch
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/osx.patch
+END
+jerase-cmd.patch
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/jerase-cmd.patch
+END
+smc91x-multi.patch
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/smc91x-multi.patch
+END
+pxa-regs-fixup.patch
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/common/pxa-regs-fixup.patch
+END

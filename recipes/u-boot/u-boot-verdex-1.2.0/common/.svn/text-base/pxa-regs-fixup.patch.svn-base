@@ -1,0 +1,282 @@
+Index: u-boot-1.2.0/include/asm-arm/arch-pxa/pxa-regs.h
+===================================================================
+--- u-boot-1.2.0.orig/include/asm-arm/arch-pxa/pxa-regs.h
++++ u-boot-1.2.0/include/asm-arm/arch-pxa/pxa-regs.h
+@@ -890,6 +890,10 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define OSSR_M1		(1 << 1)	/* Match status channel 1 */
+ #define OSSR_M0		(1 << 0)	/* Match status channel 0 */
+ 
++#define OMCR_C		(1 << 7)	/* Channel match against */
++#define OMCR_P		(1 << 6)	/* Periodic Timer */
++#define OMCR_R		(1 << 3)	/* Reset OSCRx on Match */
++
+ #define OWER_WME	(1 << 0)	/* Watchdog Match Enable */
+ 
+ #define OIER_E4		(1 << 4)	/* Interrupt enable channel 4 */
+@@ -964,7 +968,7 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GEDR1		__REG(0x40E0004C)  /* GPIO Edge Detect Status Register GPIO<63:32> */
+ #define GEDR2		__REG(0x40E00050)  /* GPIO Edge Detect Status Register GPIO<80:64> */
+ 
+-#ifdef CONFIG_CPU_MONAHANS
++#if defined(CONFIG_CPU_MONAHANS) || defined(CONFIG_PXA27X)
+ #define GPLR3		__REG(0x40E00100)  /* GPIO Pin-Level Register GPIO<127:96> */
+ #define GPDR3		__REG(0x40E0010C)  /* GPIO Pin Direction Register GPIO<127:96> */
+ #define GPSR3		__REG(0x40E00118)  /* GPIO Pin Output Set Register GPIO<127:96> */
+@@ -1236,7 +1240,7 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define AF_SEL_7	0x7	/* Alternate function 7 */
+ 
+ 
+-#else /* CONFIG_CPU_MONAHANS */
++#endif /* CONFIG_CPU_MONAHANS */
+ 
+ #define GAFR0_L		__REG(0x40E00054)  /* GPIO Alternate Function Select Register GPIO<15:0> */
+ #define GAFR0_U		__REG(0x40E00058)  /* GPIO Alternate Function Select Register GPIO<31:16> */
+@@ -1244,7 +1248,6 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GAFR1_U		__REG(0x40E00060)  /* GPIO Alternate Function Select Register GPIO<63:48> */
+ #define GAFR2_L		__REG(0x40E00064)  /* GPIO Alternate Function Select Register GPIO<79:64> */
+ #define GAFR2_U		__REG(0x40E00068)  /* GPIO Alternate Function Select Register GPIO 80 */
+-#endif /* CONFIG_CPU_MONAHANS */
+ 
+ /* More handy macros.  The argument is a literal GPIO number. */
+ 
+@@ -1269,15 +1272,15 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define _GEDR(x)	__REG2(0x40E00048, ((x) & 0x60) >> 3)
+ #define _GAFR(x)	__REG2(0x40E00054, ((x) & 0x70) >> 2)
+ 
+-#define GPLR(x)		((((x) & 0x7f) < 96) ? _GPLR(x) : GPLR3)
+-#define GPDR(x)		((((x) & 0x7f) < 96) ? _GPDR(x) : GPDR3)
+-#define GPSR(x)		((((x) & 0x7f) < 96) ? _GPSR(x) : GPSR3)
+-#define GPCR(x)		((((x) & 0x7f) < 96) ? _GPCR(x) : GPCR3)
+-#define GRER(x)		((((x) & 0x7f) < 96) ? _GRER(x) : GRER3)
+-#define GFER(x)		((((x) & 0x7f) < 96) ? _GFER(x) : GFER3)
+-#define GEDR(x)		((((x) & 0x7f) < 96) ? _GEDR(x) : GEDR3)
+-#define GAFR(x)		((((x) & 0x7f) < 96) ? _GAFR(x) : \
+-			 ((((x) & 0x7f) < 112) ? GAFR3_L : GAFR3_U))
++#define GPLR(x)		(*((((x) & 0x7f) < 96) ? &_GPLR(x) : &GPLR3))
++#define GPDR(x)		(*((((x) & 0x7f) < 96) ? &_GPDR(x) : &GPDR3))
++#define GPSR(x)		(*((((x) & 0x7f) < 96) ? &_GPSR(x) : &GPSR3))
++#define GPCR(x)		(*((((x) & 0x7f) < 96) ? &_GPCR(x) : &GPCR3))
++#define GRER(x)		(*((((x) & 0x7f) < 96) ? &_GRER(x) : &GRER3))
++#define GFER(x)		(*((((x) & 0x7f) < 96) ? &_GFER(x) : &GFER3))
++#define GEDR(x)		(*((((x) & 0x7f) < 96) ? &_GEDR(x) : &GEDR3))
++#define GAFR(x)		(*((((x) & 0x7f) < 96) ? &_GAFR(x) : \
++			 ((((x) & 0x7f) < 112) ? &GAFR3_L : &GAFR3_U)))
+ #else
+ 
+ #define GPLR(x)		__REG2(0x40E00000, ((x) & 0x60) >> 3)
+@@ -1295,7 +1298,7 @@ typedef void		(*ExcpHndlr) (void) ;
+ 
+ #define GPIO1_RST		1	/* reset */
+ #define GPIO6_MMCCLK		6	/* MMC Clock */
+-#define GPIO8_48MHz		7	/* 48 MHz clock output */
++#define GPIO7_48MHz		7	/* 48 MHz clock output */
+ #define GPIO8_MMCCS0		8	/* MMC Chip Select 0 */
+ #define GPIO9_MMCCS1		9	/* MMC Chip Select 1 */
+ #define GPIO10_RTCCLK		10	/* real time clock (1 Hz) */
+@@ -1319,6 +1322,8 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO30_SDATA_OUT	30	/* AC97/I2S Sdata_out */
+ #define GPIO31_SYNC		31	/* AC97/I2S sync */
+ #define GPIO32_SDATA_IN1	32	/* AC97 Sdata_in1 */
++#define GPIO32_SYSCLK		32	/* I2S System Clock */
++#define GPIO32_MMCCLK		32	/* MMC Clock (PXA270) */
+ #define GPIO33_nCS_5		33	/* chip select 5 */
+ #define GPIO34_FFRXD		34	/* FFUART receive */
+ #define GPIO34_MMCCS0		34	/* MMC Chip Select 0 */
+@@ -1331,9 +1336,14 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO40_FFDTR		40	/* FFUART data terminal Ready */
+ #define GPIO41_FFRTS		41	/* FFUART request to send */
+ #define GPIO42_BTRXD		42	/* BTUART receive data */
++#define GPIO42_HWRXD		42	/* HWUART receive data */
+ #define GPIO43_BTTXD		43	/* BTUART transmit data */
++#define GPIO43_HWTXD		43	/* HWUART transmit data */
+ #define GPIO44_BTCTS		44	/* BTUART clear to send */
++#define GPIO44_HWCTS		44	/* HWUART clear to send */
+ #define GPIO45_BTRTS		45	/* BTUART request to send */
++#define GPIO45_HWRTS		45	/* HWUART request to send */
++#define GPIO45_AC97_SYSCLK	45	/* AC97 System Clock */
+ #define GPIO46_ICPRXD		46	/* ICP receive data */
+ #define GPIO46_STRXD		46	/* STD_UART receive data */
+ #define GPIO47_ICPTXD		47	/* ICP transmit data */
+@@ -1347,6 +1357,7 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO53_MMCCLK		53	/* MMC Clock */
+ #define GPIO54_MMCCLK		54	/* MMC Clock */
+ #define GPIO54_pSKTSEL		54	/* Socket Select for Card Space */
++#define GPIO54_nPCE_2		54	/* Card Enable for Card Space (PXA27x) */
+ #define GPIO55_nPREG		55	/* Card Address bit 26 */
+ #define GPIO56_nPWAIT		56	/* Wait signal for Card Space */
+ #define GPIO57_nIOIS16		57	/* Bus Width select for I/O Card Space */
+@@ -1381,6 +1392,24 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO78_nCS_2		78	/* chip select 2 */
+ #define GPIO79_nCS_3		79	/* chip select 3 */
+ #define GPIO80_nCS_4		80	/* chip select 4 */
++#define GPIO81_NSCLK		81	/* NSSP clock */
++#define GPIO82_NSFRM		82	/* NSSP Frame */
++#define GPIO83_NSTXD		83	/* NSSP transmit */
++#define GPIO84_NSRXD		84	/* NSSP receive */
++#define GPIO85_nPCE_1		85	/* Card Enable for Card Space (PXA27x) */
++#define GPIO92_MMCDAT0		92	/* MMC DAT0 (PXA27x) */
++#define GPIO104_nPCD1		104	/* CF card slot0 detect */
++#define GPIO109_PRDY_nBSY0	109	/* CF card slot 0 READY */
++#define GPIO109_MMCDAT1		109	/* MMC DAT1 (PXA27x) */
++#define GPIO110_MMCDAT2		110	/* MMC DAT2 (PXA27x) */
++#define GPIO110_MMCCS0		110	/* MMC Chip Select 0 (PXA27x) */
++#define GPIO110_CF_RESET	110	/* CF reset */
++#define GPIO111_nBVD1		111	/* CF nBVD1 */
++#define GPIO111_MMCDAT3		111	/* MMC DAT3 (PXA27x) */
++#define GPIO111_MMCCS1		111	/* MMC Chip Select 1 (PXA27x) */
++#define GPIO112_MMCCMD		112	/* MMC CMD (PXA27x) */
++#define GPIO113_I2S_SYSCLK	113	/* I2S System Clock (PXA27x) */
++#define GPIO113_AC97_RESET_N	113	/* AC97 NRESET on (PXA27x) */
+ 
+ /* GPIO alternate function mode & direction */
+ 
+@@ -1392,13 +1421,16 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO_ALT_FN_2_OUT	0x280
+ #define GPIO_ALT_FN_3_IN	0x300
+ #define GPIO_ALT_FN_3_OUT	0x380
++#define GPIO_ACTIVE_LOW         0x1000
+ #define GPIO_MD_MASK_NR		0x07f
+ #define GPIO_MD_MASK_DIR	0x080
+ #define GPIO_MD_MASK_FN		0x300
++#define GPIO_DFLT_LOW		0x400
++#define GPIO_DFLT_HIGH		0x800
+ 
+ #define GPIO1_RTS_MD		( 1 | GPIO_ALT_FN_1_IN)
+ #define GPIO6_MMCCLK_MD		( 6 | GPIO_ALT_FN_1_OUT)
+-#define GPIO8_48MHz_MD		( 8 | GPIO_ALT_FN_1_OUT)
++#define GPIO7_48MHz_MD		( 7 | GPIO_ALT_FN_1_OUT)
+ #define GPIO8_MMCCS0_MD		( 8 | GPIO_ALT_FN_1_OUT)
+ #define GPIO9_MMCCS1_MD		( 9 | GPIO_ALT_FN_1_OUT)
+ #define GPIO10_RTCCLK_MD	(10 | GPIO_ALT_FN_1_OUT)
+@@ -1412,20 +1444,23 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO18_RDY_MD		(18 | GPIO_ALT_FN_1_IN)
+ #define GPIO19_DREQ1_MD		(19 | GPIO_ALT_FN_1_IN)
+ #define GPIO20_DREQ0_MD		(20 | GPIO_ALT_FN_1_IN)
+-#define GPIO23_SCLK_md		(23 | GPIO_ALT_FN_2_OUT)
++#define GPIO23_SCLK_MD		(23 | GPIO_ALT_FN_2_OUT)
+ #define GPIO24_SFRM_MD		(24 | GPIO_ALT_FN_2_OUT)
+ #define GPIO25_STXD_MD		(25 | GPIO_ALT_FN_2_OUT)
+ #define GPIO26_SRXD_MD		(26 | GPIO_ALT_FN_1_IN)
+ #define GPIO27_SEXTCLK_MD	(27 | GPIO_ALT_FN_1_IN)
+ #define GPIO28_BITCLK_AC97_MD	(28 | GPIO_ALT_FN_1_IN)
+-#define GPIO28_BITCLK_I2S_MD	(28 | GPIO_ALT_FN_2_IN)
++#define GPIO28_BITCLK_IN_I2S_MD	(28 | GPIO_ALT_FN_2_IN)
++#define GPIO28_BITCLK_OUT_I2S_MD	(28 | GPIO_ALT_FN_1_OUT)
+ #define GPIO29_SDATA_IN_AC97_MD (29 | GPIO_ALT_FN_1_IN)
+ #define GPIO29_SDATA_IN_I2S_MD	(29 | GPIO_ALT_FN_2_IN)
+ #define GPIO30_SDATA_OUT_AC97_MD	(30 | GPIO_ALT_FN_2_OUT)
+ #define GPIO30_SDATA_OUT_I2S_MD (30 | GPIO_ALT_FN_1_OUT)
+-#define GPIO31_SYNC_AC97_MD	(31 | GPIO_ALT_FN_2_OUT)
+ #define GPIO31_SYNC_I2S_MD	(31 | GPIO_ALT_FN_1_OUT)
++#define GPIO31_SYNC_AC97_MD	(31 | GPIO_ALT_FN_2_OUT)
+ #define GPIO32_SDATA_IN1_AC97_MD	(32 | GPIO_ALT_FN_1_IN)
++#define GPIO32_SYSCLK_I2S_MD	(32 | GPIO_ALT_FN_1_OUT)
++#define GPIO32_MMCCLK_MD		( 32 | GPIO_ALT_FN_2_OUT)
+ #define GPIO33_nCS_5_MD		(33 | GPIO_ALT_FN_2_OUT)
+ #define GPIO34_FFRXD_MD		(34 | GPIO_ALT_FN_1_IN)
+ #define GPIO34_MMCCS0_MD	(34 | GPIO_ALT_FN_2_OUT)
+@@ -1438,21 +1473,32 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO40_FFDTR_MD		(40 | GPIO_ALT_FN_2_OUT)
+ #define GPIO41_FFRTS_MD		(41 | GPIO_ALT_FN_2_OUT)
+ #define GPIO42_BTRXD_MD		(42 | GPIO_ALT_FN_1_IN)
++#define GPIO42_HWRXD_MD		(42 | GPIO_ALT_FN_3_IN)
+ #define GPIO43_BTTXD_MD		(43 | GPIO_ALT_FN_2_OUT)
++#define GPIO43_HWTXD_MD		(43 | GPIO_ALT_FN_3_OUT)
+ #define GPIO44_BTCTS_MD		(44 | GPIO_ALT_FN_1_IN)
++#define GPIO44_HWCTS_MD		(44 | GPIO_ALT_FN_3_IN)
+ #define GPIO45_BTRTS_MD		(45 | GPIO_ALT_FN_2_OUT)
++#define GPIO45_HWRTS_MD		(45 | GPIO_ALT_FN_3_OUT)
++#define GPIO45_SYSCLK_AC97_MD		(45 | GPIO_ALT_FN_1_OUT)
+ #define GPIO46_ICPRXD_MD	(46 | GPIO_ALT_FN_1_IN)
+ #define GPIO46_STRXD_MD		(46 | GPIO_ALT_FN_2_IN)
+ #define GPIO47_ICPTXD_MD	(47 | GPIO_ALT_FN_2_OUT)
+ #define GPIO47_STTXD_MD		(47 | GPIO_ALT_FN_1_OUT)
+ #define GPIO48_nPOE_MD		(48 | GPIO_ALT_FN_2_OUT)
++#define GPIO48_HWTXD_MD         (48 | GPIO_ALT_FN_1_OUT)
++#define GPIO48_nPOE_MD          (48 | GPIO_ALT_FN_2_OUT)
++#define GPIO49_HWRXD_MD		(49 | GPIO_ALT_FN_1_IN)
+ #define GPIO49_nPWE_MD		(49 | GPIO_ALT_FN_2_OUT)
+ #define GPIO50_nPIOR_MD		(50 | GPIO_ALT_FN_2_OUT)
++#define GPIO50_HWCTS_MD         (50 | GPIO_ALT_FN_1_IN)
++#define GPIO51_HWRTS_MD         (51 | GPIO_ALT_FN_1_OUT)
+ #define GPIO51_nPIOW_MD		(51 | GPIO_ALT_FN_2_OUT)
+ #define GPIO52_nPCE_1_MD	(52 | GPIO_ALT_FN_2_OUT)
+ #define GPIO53_nPCE_2_MD	(53 | GPIO_ALT_FN_2_OUT)
+ #define GPIO53_MMCCLK_MD	(53 | GPIO_ALT_FN_1_OUT)
+ #define GPIO54_MMCCLK_MD	(54 | GPIO_ALT_FN_1_OUT)
++#define GPIO54_nPCE_2_MD	(54 | GPIO_ALT_FN_2_OUT)
+ #define GPIO54_pSKTSEL_MD	(54 | GPIO_ALT_FN_2_OUT)
+ #define GPIO55_nPREG_MD		(55 | GPIO_ALT_FN_2_OUT)
+ #define GPIO56_nPWAIT_MD	(56 | GPIO_ALT_FN_1_IN)
+@@ -1487,10 +1533,36 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define GPIO77_LCD_ACBIAS_MD	(77 | GPIO_ALT_FN_2_OUT)
+ #define GPIO78_nCS_2_MD		(78 | GPIO_ALT_FN_2_OUT)
+ #define GPIO79_nCS_3_MD		(79 | GPIO_ALT_FN_2_OUT)
++#define GPIO79_pSKTSEL_MD	(79 | GPIO_ALT_FN_1_OUT)
+ #define GPIO80_nCS_4_MD		(80 | GPIO_ALT_FN_2_OUT)
+ 
+-#define GPIO117_SCL		(117 | GPIO_ALT_FN_1_OUT)
+-#define GPIO118_SDA		(118 | GPIO_ALT_FN_1_OUT)
++#define GPIO81_NSSP_CLK_OUT 	(81 | GPIO_ALT_FN_1_OUT)
++#define GPIO81_NSSP_CLK_IN  	(81 | GPIO_ALT_FN_1_IN)
++#define GPIO82_NSSP_FRM_OUT 	(82 | GPIO_ALT_FN_1_OUT)
++#define GPIO82_NSSP_FRM_IN  	(82 | GPIO_ALT_FN_1_IN)
++#define GPIO83_NSSP_TX      	(83 | GPIO_ALT_FN_1_OUT)
++#define GPIO83_NSSP_RX      	(83 | GPIO_ALT_FN_2_IN)
++#define GPIO84_NSSP_TX      	(84 | GPIO_ALT_FN_1_OUT)
++#define GPIO84_NSSP_RX      	(84 | GPIO_ALT_FN_2_IN)
++#define GPIO85_nPCE_1_MD	(85 | GPIO_ALT_FN_1_OUT)
++#define GPIO92_MMCDAT0_MD	(92 | GPIO_ALT_FN_1_OUT)
++#define GPIO102_nPCE_1_MD	(102 | GPIO_ALT_FN_1_OUT)
++#define GPIO104_pSKTSEL_MD	(104 | GPIO_ALT_FN_1_OUT)
++#define GPIO104_nPCD1_MD	(104 | GPIO_IN)
++#define GPIO105_nPCE_2_MD	(105 | GPIO_ALT_FN_1_OUT)
++#define GPIO109_MMCDAT1_MD	(109 | GPIO_ALT_FN_1_OUT)
++#define GPIO109_PRDY_nBSY0_MD	(109 | GPIO_IN)
++#define GPIO110_CF_RESET_MD	(110 | GPIO_OUT)
++#define GPIO110_MMCDAT2_MD	(110 | GPIO_ALT_FN_1_OUT)
++#define GPIO110_MMCCS0_MD	(110 | GPIO_ALT_FN_1_OUT)
++#define GPIO111_nBVD1_MD	(111 | GPIO_IN)
++#define GPIO111_MMCDAT3_MD	(111 | GPIO_ALT_FN_1_OUT)
++#define GPIO110_MMCCS1_MD	(111 | GPIO_ALT_FN_1_OUT)
++#define GPIO112_MMCCMD_MD	(112 | GPIO_ALT_FN_1_OUT)
++#define GPIO113_I2S_SYSCLK_MD	(113 | GPIO_ALT_FN_1_OUT)
++#define GPIO113_AC97_RESET_N_MD	(113 | GPIO_ALT_FN_2_OUT)
++#define GPIO117_I2CSCL_MD	(117 | GPIO_ALT_FN_1_OUT)
++#define GPIO118_I2CSDA_MD	(118 | GPIO_ALT_FN_1_IN)
+ 
+ /*
+  * Power Manager
+@@ -2193,6 +2265,20 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define MDMRS		__REG(0x48000040)  /* MRS value to be written to SDRAM */
+ #define BOOT_DEF	__REG(0x48000044)  /* Read-Only Boot-Time Register. Contains BOOT_SEL and PKG_SEL */
+ 
++/*
++ * More handy macros for PCMCIA
++ *
++ * Arg is socket number
++ */
++#define MCMEM(s)	__REG2(0x48000028, (s)<<2 )  /* Card interface Common Memory Space Socket s Timing */
++#define MCATT(s)	__REG2(0x48000030, (s)<<2 )  /* Card interface Attribute Space Socket s Timing Configuration */
++#define MCIO(s)		__REG2(0x48000038, (s)<<2 )  /* Card interface I/O Space Socket s Timing Configuration */
++
++/* MECR register defines */
++#define MECR_NOS	(1 << 0)	/* Number Of Sockets: 0 -> 1 sock, 1 -> 2 sock */
++#define MECR_CIT	(1 << 1)	/* Card Is There: 0 -> no card, 1 -> card inserted */
++
++#define MDREFR_K0DB4	(1 << 29)	/* SDCLK0 Divide by 4 Control/Status */
+ #define MDREFR_K2FREE	(1 << 25)	/* SDRAM Free-Running Control */
+ #define MDREFR_K1FREE	(1 << 24)	/* SDRAM Free-Running Control */
+ #define MDREFR_K0FREE	(1 << 23)	/* SDRAM Free-Running Control */
+@@ -2391,8 +2477,11 @@ typedef void		(*ExcpHndlr) (void) ;
+ #define PKWR		__REG(0x40F00050)  /* Power Manager KB Wake-Up Enable Reg */
+ #define PKSR		__REG(0x40F00054)  /* Power Manager KB Level-Detect Status Reg */
+ #define OSMR4		__REG(0x40A00080)  /* */
++#define OSMR10		__REG(0x40A00098)  /* */
+ #define OSCR4		__REG(0x40A00040)  /* OS Timer Counter Register */
++#define OSCR10		__REG(0x40A00058)  /* OS Timer Counter Register */
+ #define OMCR4		__REG(0x40A000C0)  /* */
++#define OMCR10		__REG(0x40A000D8)  /* */
+ 
+ #endif	/* CONFIG_PXA27X */
+ 

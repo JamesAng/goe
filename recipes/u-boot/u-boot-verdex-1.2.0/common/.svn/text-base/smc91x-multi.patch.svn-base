@@ -1,0 +1,130 @@
+Index: u-boot-1.2.0/drivers/smc91111.c
+===================================================================
+--- u-boot-1.2.0.orig/drivers/smc91111.c
++++ u-boot-1.2.0/drivers/smc91111.c
+@@ -155,10 +155,14 @@ static const char version[] =
+  .
+  .------------------------------------------------------------------  */
+ 
++#ifndef CONFIG_NET_MULTI
+ extern int eth_init(bd_t *bd);
+ extern void eth_halt(void);
+ extern int eth_rx(void);
+ extern int eth_send(volatile void *packet, int length);
++#else
++extern int smc_initialize(bd_t *);
++#endif
+ 
+ #ifdef SHARED_RESOURCES
+ 	extern void swap_to(int device_id);
+@@ -809,6 +813,56 @@ void smc_destructor()
+ }
+ 
+ 
++#ifdef CONFIG_NET_MULTI
++static int smc_multi_init(struct eth_device *, bd_t *);
++static void smc_multi_halt(struct eth_device *);
++static int smc_multi_send(struct eth_device *,volatile void *,int);
++static int smc_multi_recv(struct eth_device *);
++
++extern int smc_initialize(bd_t *bd)
++{
++	struct eth_device *dev;
++
++	dev = (struct eth_device *)malloc(sizeof(struct eth_device));
++	sprintf(dev->name, "SMC91C1111-%d",0);
++	dev->priv = NULL;
++	dev->iobase = SMC_BASE_ADDRESS;
++	dev->init = smc_multi_init;
++	dev->halt = smc_multi_halt;
++	dev->send = smc_multi_send;
++	dev->recv = smc_multi_recv;
++	eth_register(dev);
++
++	return 1; // number of cards detected
++}
++
++static int smc_multi_init(struct eth_device *dev, bd_t *bis)
++{
++	if(dev->priv == NULL)
++	{
++	smc_open(bis);
++		dev->priv = (void *)1;
++	}
++	return 1;
++}
++
++static void smc_multi_halt(struct eth_device *dev)
++{
++	// Not sure when we should actually close...
++	//smc_close();
++}
++
++static int smc_multi_send(struct eth_device *dev, volatile void *packet, int length)
++{
++	return smc_send_packet(packet, length);
++}
++
++static int smc_multi_recv(struct eth_device *dev)
++{
++	return smc_rcv();
++}
++#endif
++
+ /*
+  * Open and Initialize the board
+  *
+@@ -1516,6 +1570,7 @@ static void print_packet( byte * buf, in
+ }
+ #endif
+ 
++#ifndef CONFIG_NET_MULTI
+ int eth_init(bd_t *bd) {
+ #ifdef SHARED_RESOURCES
+ 	swap_to(ETHERNET);
+@@ -1534,6 +1589,7 @@ int eth_rx() {
+ int eth_send(volatile void *packet, int length) {
+ 	return smc_send_packet(packet, length);
+ }
++#endif //CONFIG_NET_MULTI
+ 
+ int smc_get_ethaddr (bd_t * bd)
+ {
+Index: u-boot-1.2.0/lib_arm/board.c
+===================================================================
+--- u-boot-1.2.0.orig/lib_arm/board.c
++++ u-boot-1.2.0/lib_arm/board.c
+@@ -309,6 +309,11 @@ void start_armboot (void)
+ 	/* initialize environment */
+ 	env_relocate ();
+ 
++#if (CONFIG_COMMANDS & CFG_CMD_NET) && defined(CONFIG_NET_MULTI)
++	/* must do after the environment variables are set up */
++	eth_initialize (NULL);
++#endif                                                                                                                                                                                                 
++
+ #ifdef CONFIG_VFD
+ 	/* must do this after the framebuffer is allocated */
+ 	drv_vfd_init();
+Index: u-boot-1.2.0/net/eth.c
+===================================================================
+--- u-boot-1.2.0.orig/net/eth.c
++++ u-boot-1.2.0/net/eth.c
+@@ -55,6 +55,7 @@ extern int skge_initialize(bd_t*);
+ extern int tsec_initialize(bd_t*, int, char *);
+ extern int npe_initialize(bd_t *);
+ extern int uec_initialize(int);
++extern int smc_initialize(bd_t*);
+ 
+ static struct eth_device *eth_devices, *eth_current;
+ 
+@@ -255,6 +256,9 @@ int eth_initialize(bd_t *bis)
+ #if defined(CONFIG_RTL8169)
+ 	rtl8169_initialize(bis);
+ #endif
++#if defined(CONFIG_DRIVER_SMC91111)
++	smc_initialize(bis);
++#endif
+ 
+ 	if (!eth_devices) {
+ 		puts ("No ethernet found.\n");

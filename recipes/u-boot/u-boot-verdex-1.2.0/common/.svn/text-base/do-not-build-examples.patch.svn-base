@@ -1,0 +1,34 @@
+Index: u-boot-1.2.0/Makefile
+===================================================================
+--- u-boot-1.2.0.orig/Makefile
++++ u-boot-1.2.0/Makefile
+@@ -220,10 +220,9 @@ PLATFORM_LIBS += -L $(shell dirname `$(C
+ # The "tools" are needed early, so put this first
+ # Don't include stuff already done in $(LIBS)
+ SUBDIRS	= tools \
+-	  examples \
+ 	  post \
+ 	  post/cpu
+-.PHONY : $(SUBDIRS)
++.PHONY : $(SUBDIRS) examples
+ 
+ ifeq ($(CONFIG_NAND_U_BOOT),y)
+ NAND_SPL = nand_spl
+@@ -271,7 +270,7 @@ $(OBJS):
+ $(LIBS):
+ 		$(MAKE) -C $(dir $(subst $(obj),,$@))
+ 
+-$(SUBDIRS):
++$(SUBDIRS) examples:
+ 		$(MAKE) -C $@ all
+ 
+ $(NAND_SPL):	version
+@@ -322,7 +321,7 @@ $(obj)System.map:	$(obj)u-boot
+ else
+ all $(obj)u-boot.hex $(obj)u-boot.srec $(obj)u-boot.bin \
+ $(obj)u-boot.img $(obj)u-boot.dis $(obj)u-boot \
+-$(SUBDIRS) version gdbtools updater env depend \
++$(SUBDIRS) examples version gdbtools updater env depend \
+ dep tags ctags etags $(obj)System.map:
+ 	@echo "System not configured - see README" >&2
+ 	@ exit 1

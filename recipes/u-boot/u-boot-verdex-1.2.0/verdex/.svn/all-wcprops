@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/gumstix-buildroot/!svn/ver/1604/trunk/target/arm/u-boot/verdex
+END
+use-smc91C111-for-now.patch
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/gumstix-buildroot/!svn/ver/1444/trunk/target/arm/u-boot/verdex/use-smc91C111-for-now.patch
+END
+base.patch
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/gumstix-buildroot/!svn/ver/1604/trunk/target/arm/u-boot/verdex/base.patch
+END
+series
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/gumstix-buildroot/!svn/ver/1554/trunk/target/arm/u-boot/verdex/series
+END
+smc911x-driver.patch
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/gumstix-buildroot/!svn/ver/1524/trunk/target/arm/u-boot/verdex/smc911x-driver.patch
+END

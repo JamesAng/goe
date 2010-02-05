@@ -1,0 +1,31 @@
+Index: u-boot-1.2.0/MAKEALL
+===================================================================
+--- u-boot-1.2.0.orig/MAKEALL
++++ u-boot-1.2.0/MAKEALL
+@@ -219,9 +219,9 @@ LIST_ARM11="	\
+ 
+ LIST_pxa="	\
+ 	adsvix		cerf250		cradle		csb226		\
+-	delta		innokom		lubbock		pleb2		\
+-	pxa255_idp	wepep250	xaeniax		xm250		\
+-	xsengine	zylonite					\
++	delta		gumstix		innokom		lubbock		\
++	pleb2		pxa255_idp	wepep250	xaeniax		\
++	xm250		xsengine	zylonite			\
+ "
+ 
+ LIST_ixp="ixdp425	ixdpg425	pdnb3"
+Index: u-boot-1.2.0/Makefile
+===================================================================
+--- u-boot-1.2.0.orig/Makefile
++++ u-boot-1.2.0/Makefile
+@@ -2034,6 +2034,9 @@ csb226_config	:	unconfig
+ delta_config :
+ 	@$(MKCONFIG) $(@:_config=) arm pxa delta
+ 
++gumstix_config	:	unconfig
++	@./mkconfig $(@:_config=) arm pxa gumstix
++
+ innokom_config	:	unconfig
+ 	@$(MKCONFIG) $(@:_config=) arm pxa innokom
+ 

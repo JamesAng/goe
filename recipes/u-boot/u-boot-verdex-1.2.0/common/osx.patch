@@ -1,0 +1,43 @@
+Index: u-boot-1.2.0/tools/Makefile
+===================================================================
+--- u-boot-1.2.0.orig/tools/Makefile
++++ u-boot-1.2.0/tools/Makefile
+@@ -59,38 +59,9 @@ HOSTOS := $(shell uname -s | tr A-Z a-z 
+ 
+ TOOLSUBDIRS =
+ 
+-#
+-# Mac OS X / Darwin's C preprocessor is Apple specific.  It
+-# generates numerous errors and warnings.  We want to bypass it
+-# and use GNU C's cpp.  To do this we pass the -traditional-cpp
+-# option to the compiler.  Note that the -traditional-cpp flag
+-# DOES NOT have the same semantics as GNU C's flag, all it does
+-# is invoke the GNU preprocessor in stock ANSI/ISO C fashion.
+-#
+-# Apple's linker is similar, thanks to the new 2 stage linking
+-# multiple symbol definitions are treated as errors, hence the
+-# -multiply_defined suppress option to turn off this error.
+-#
+-ifeq ($(HOSTOS)-$(HOSTARCH),darwin-ppc)
+-HOST_CFLAGS = -traditional-cpp -Wall
+-HOST_LDFLAGS =-multiply_defined suppress
+-HOST_ENVIRO_CFLAGS = -traditional-cpp
+-
+-else
+-ifeq ($(HOSTOS)-$(HOSTARCH),netbsd-ppc)
+-HOST_CFLAGS = -Wall -pedantic
+-HOST_LDFLAGS =
+-HOST_ENVIRO_CFLAGS =
+-
+-#
+-# Everyone else
+-#
+-else
+ HOST_CFLAGS = -Wall -pedantic
+ HOST_LDFLAGS =
+ HOST_ENVIRO_CFLAGS =
+-endif
+-endif
+ 
+ #
+ # Cygwin needs .exe files :-(
