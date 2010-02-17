@@ -1,5 +1,5 @@
 require blueprobe.inc
-PR = "r6"
+PR = "r7"
 
 SRC_URI += "\
   file://fix-makefile.patch;patch=1 \
@@ -7,5 +7,6 @@ SRC_URI += "\
   file://uclibc-fix.patch;patch=1 \
   file://rx3000.patch;patch=1 \
   file://overo.patch;patch=1 \
+  file://verdex.patch;patch=1 \
 "
 
