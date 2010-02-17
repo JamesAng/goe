@@ -23,6 +23,8 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
+TARGET_CC_ARCH += "${LDFLAGS}"
+
 do_compile () {
 	${CC} -o i2c *.c
 }
