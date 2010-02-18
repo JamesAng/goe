@@ -4,7 +4,7 @@ SECTION = "libs"
 PRIORITY = "optional"
 LICENSE = "GPL"
 DEPENDS = "gst-plugins-base alsa-lib virtual/libusb0 dbus-glib"
-INC_PR = "r4"
+INC_PR = "r5"
 
 # temporary solution until bug 5176 is properly fixed
 PROVIDES_bluez4 += "bluez-utils bluez-libs"
@@ -29,6 +29,12 @@ SRC_URI = "\
 SRC_URI_append_overo = "\
   file://bluetooth.default \
   file://bluetooth.init \
+"
+
+SRC_URI_append_gumstix-verdex = "\
+  file://bluetooth.default \
+  file://bluetooth.init \
+  file://hciattach-infineon-gumstix.patch;patch=1 \
 "
 
 SRC_URI_append_omap3 = "\
@@ -70,6 +76,11 @@ do_install_append() {
 }
 
 do_install_append_overo() {
+	install -m 0644 ${WORKDIR}/bluetooth.default ${D}${sysconfdir}/default/bluetooth
+	install -m 0755 ${WORKDIR}/bluetooth.init    ${D}${sysconfdir}/init.d/bluetooth
+}
+
+do_install_append_gumstix-verdex() {
 	install -m 0644 ${WORKDIR}/bluetooth.default ${D}${sysconfdir}/default/bluetooth
 	install -m 0755 ${WORKDIR}/bluetooth.init    ${D}${sysconfdir}/init.d/bluetooth
 }
