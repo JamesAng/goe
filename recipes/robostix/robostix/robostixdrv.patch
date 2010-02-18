@@ -1,0 +1,88 @@
+--- robostix/gumstix/robostix_drv.c.orig	2009-08-12 11:58:32.000000000 -0700
++++ robostix/gumstix/robostix_drv.c	2010-02-18 14:25:17.682719354 -0800
+@@ -37,12 +37,18 @@
+ #include <linux/cdev.h>
+ #include <linux/device.h>
+ #include <linux/version.h>
++#include <linux/delay.h>
+ 
+-#include <asm/delay.h>
+ #include <asm/uaccess.h>
+ 
+-#include <asm/arch/hardware.h>
+-#include <asm/arch/pxa-regs.h>
++#include <mach/hardware.h>
++#include <mach/pxa2xx-regs.h>
++#include <mach/gpio.h>
++#ifdef CONFIG_PXA27x
++#include <mach/mfp-pxa27x.h>
++#else
++#include <mach/mfp-pxa25x.h>
++#endif
+ 
+ #include "svn-version.h"
+ #include "robostix_drv.h"
+@@ -179,16 +185,16 @@
+  * board.
+  */
+ 
+-#define ROBOSTIX_GPIO_ATM_IRQ       GPIO69_LDD_11
+-#define ROBOSTIX_GPIO_VCC5_ENABLE   GPIO70_LDD_12
+-#define ROBOSTIX_GPIO_245_ENABLE    GPIO72_LDD_14
+-#define ROBOSTIX_GPIO_ATM_RESET     GPIO73_LDD_15
++#define ROBOSTIX_GPIO_ATM_IRQ       GPIO69_LCD_LDD_11
++#define ROBOSTIX_GPIO_VCC5_ENABLE   GPIO70_LCD_LDD_12
++#define ROBOSTIX_GPIO_245_ENABLE    GPIO72_LCD_LDD_14
++#define ROBOSTIX_GPIO_ATM_RESET     GPIO73_LCD_LDD_15
+ 
+ #ifdef CONFIG_PXA27x
+-#   define ROBOSTIX_GPIO_ATM_SCK    ( 19 | GPIO_ALT_FN_1_OUT )
+-#   define ROBOSTIX_GPIO_ATM_SS     ( 14 | GPIO_ALT_FN_2_OUT )
+-#   define ROBOSTIX_GPIO_ATM_MOSI   ( 13 | GPIO_ALT_FN_1_OUT )
+-#   define ROBOSTIX_GPIO_ATM_MISO   ( 11 | GPIO_ALT_FN_2_IN )
++#   define ROBOSTIX_GPIO_ATM_SCK    GPIO19_SSP2_SCLK
++#   define ROBOSTIX_GPIO_ATM_SS     GPIO14_SSP2_SFRM
++#   define ROBOSTIX_GPIO_ATM_MOSI   GPIO13_SSP2_TXD
++#   define ROBOSTIX_GPIO_ATM_MISO   GPIO11_SSP2_RXD
+ #else
+ #   define ROBOSTIX_GPIO_ATM_SCK    GPIO81_NSCLK
+ #   define ROBOSTIX_GPIO_ATM_SS     GPIO82_NSFRM
+@@ -196,8 +202,8 @@
+ #   define ROBOSTIX_GPIO_ATM_MISO   GPIO84_NSRXD
+ #endif
+ 
+-#define ROBOSTIX_GPIO_IR_RXD_5V     GPIO46_STRXD
+-#define ROBOSTIX_GPIO_IR_TXD_5V     GPIO47_STTXD
++#define ROBOSTIX_GPIO_IR_RXD_5V     GPIO46_STUART_RXD
++#define ROBOSTIX_GPIO_IR_TXD_5V     GPIO47_STUART_TXD
+ 
+ // Since IR TxD/RxD behave like MOSI/MISO during programming, we define a
+ // couple of aliases
+@@ -402,7 +408,7 @@
+ {
+     ROBO_DEBUG( Trace, "called\n" );
+ 
+-    class_device_destroy( gRobostixClass, gRobostixDevNum );
++    device_destroy( gRobostixClass, gRobostixDevNum );
+     class_destroy( gRobostixClass );
+ 
+     cdev_del( &gRobostixCDev );
+@@ -549,7 +555,7 @@
+         return -1;
+     }
+ 
+-    class_device_create( gRobostixClass, NULL, gRobostixDevNum, NULL, ROBOSTIX_DEV_NAME );
++    device_create( gRobostixClass, NULL, gRobostixDevNum, NULL, ROBOSTIX_DEV_NAME );
+ 
+     return 0;
+ 
+@@ -701,8 +707,7 @@
+                 // Allow some time for the above warning to get printed on the
+                 // console before we turn it off.
+ 
+-                set_current_state( TASK_INTERRUPTIBLE );
+-                schedule_timeout( 2 );
++                msleep( 20 );
+             }
+ 
+             SET_GPIO( ROBOSTIX_GPIO_245_ENABLE, !arg );
