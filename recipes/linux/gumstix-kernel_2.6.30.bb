@@ -7,18 +7,17 @@ SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-${PV}.tar.bz2 \
 	"
 
 SRC_URI_append = " \
-#	file://no-empty-flash-warnings.patch;patch=1 \
-#	file://fix-install.patch;patch=1 \
-#	file://gumstix-2.6.30.patch;patch=1 \
-#	file://tsc2003-config.patch;patch=1 \
-#	file://header.patch;patch=1 \
-#	file://compact-flash.patch;patch=1 \
-#	file://flash.patch;patch=1 \
-#	file://proc-gpio.patch;patch=1 \
-#	file://modular-init-bluetooth.patch;patch=1 \
-#	file://quiet-single-block-retry-warning.patch;patch=1 \
-#	file://smsc911x.patch;patch=1 \
-#	file://rc8-to-final.diff;patch=1 \
+	file://no-empty-flash-warnings.patch;patch=1 \
+	file://fix-install.patch;patch=1 \
+	file://gumstix-2.6.30.patch;patch=1 \
+	file://tsc2003-config.patch;patch=1 \
+	file://header.patch;patch=1 \
+	file://compact-flash.patch;patch=1 \
+	file://flash.patch;patch=1 \
+	file://proc-gpio.patch;patch=1 \
+	file://modular-init-bluetooth.patch;patch=1 \
+	file://quiet-single-block-retry-warning.patch;patch=1 \
+	file://smsc911x.patch;patch=1 \
 	"
 
 
