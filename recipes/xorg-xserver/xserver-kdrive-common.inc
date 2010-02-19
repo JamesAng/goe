@@ -1,6 +1,7 @@
 LICENSE = "MIT"
 DEPENDS = "compositeproto damageproto fixesproto recordproto resourceproto scrnsaverproto xineramaproto videoproto xextproto xproto \
-	libxau libxext libxdmcp libxfont libxrandr tslib virtual/libx11 xtrans"
+	libxau libxext libxdmcp libxfont libxrandr tslib virtual/libx11 xtrans xextproto-70-includes"
+INC_PR = "r28"
 
 PKGN ?= "xserver-kdrive"
 
@@ -71,7 +72,7 @@ FILES_${PKGN}-smi = "${bindir}/Xsmi"
 FILES_${PKGN}-vesa = "${bindir}/Xvesa"
 FILES_${PKGN}-via = "${bindir}/Xvia"
 
-SRC_URI ?= "${XORG_MIRROR}/individual/xserver/xorg-server-${PV}.tar.bz2 \
+SRC_URI ?= "${XORG_MIRROR}/individual/xserver/xorg-server-${PV}.tar.bz2;name=archive \
 	${KDRIVE_COMMON_PATCHES}"
 KDRIVE_COMMON_PATCHES = " \
 	file://kmode.patch;patch=1 \
@@ -93,6 +94,8 @@ PACKAGE_ARCH_qemux86 = "${MACHINE_ARCH}"
 inherit autotools pkgconfig
 
 ARM_INSTRUCTION_SET = "arm"
+
+CFLAGS_prepend = "-I${STAGING_INCDIR}/xextproto-70 "
 
 EXTRA_OECONF = "--enable-composite --enable-kdrive \
                 --disable-dga --disable-dri --disable-xinerama \

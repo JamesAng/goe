@@ -1,22 +1,12 @@
 require gtk+.inc
 
-DEPENDS += "cairo jasper"
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
-# disabled per default - this uses as little patches as possible
-DEFAULT_PREFERENCE = "-1" 
+# Enable xkb selectively
+XKBTOGGLE = " --disable-xkb"
+XKBTOGGLE_angstrom = ""
 
-SRC_URI = "http://download.gnome.org/sources/gtk+/2.18/gtk+-${PV}.tar.bz2 \
-           file://xsettings.patch;patch=1 \
-           file://run-iconcache.patch;patch=1 \
-           file://hardcoded_libtool.patch;patch=1 \
-           file://no-demos.patch;patch=1 \
-           file://toggle-font.diff;patch=1;pnum=0 \
-          "
-
-EXTRA_OECONF = "--with-libtiff --disable-xkb --disable-glibtest --enable-display-migration gio_can_sniff=yes"
-
-LIBV = "2.10.0"
+EXTRA_OECONF = "--with-libtiff ${XKBTOGGLE} --disable-glibtest gio_can_sniff=yes"
 
 PACKAGES_DYNAMIC = "gtk-module-* gdk-pixbuf-loader-* gtk-immodule-* gtk-printbackend-*"
 
@@ -56,11 +46,3 @@ RCONFLICTS_${PN}-dbg = "libgailutil-dbg"
 RREPLACES_${PN}-dbg = "libgailutil-dbg"
 # FIXME: replace locales as well
 
-do_stage_append() {
-
-	# this tool is required by gnome-keyring 2.26.0 to get built
-	# it is written in Python and use only Python xml
-	install -d ${STAGING_BINDIR_NATIVE}
-	install -m 0755 ${S}/gtk/gtk-builder-convert ${STAGING_BINDIR_NATIVE}
-
-}

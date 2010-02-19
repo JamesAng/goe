@@ -1,13 +1,10 @@
-#initramfs image which mounts the rootfilesystem and kexecs a kernel from there
-PR = "r1"
+# Initramfs image providing kexecboot
+# a linux as bootloader implementation
+PR = "r3"
 
 ONLINE_PACKAGE_MANAGEMENT = "none"
-IMAGE_FSTYPES = "cpio.gz"
-
-# Deprecated: device nodes are populated by kexecboot now
-# These devices need mmcblk* to be 254 instead of 179
-IMAGE_DEVICE_TABLES_hx4700 = "device_table-oldmmc.txt"
-IMAGE_DEVICE_TABLES_h2200 = "device_table-oldmmc.txt"
+IMAGE_FSTYPES = "cpio.gz cpio.lzma"
+DEPENDS = "lzma-native"
 
 export IMAGE_BASENAME = "initramfs-kexecboot-image"
 
@@ -21,5 +18,7 @@ IMAGE_LOGIN_MANAGER = ""
 IMAGE_INIT_MANAGER = ""
 IMAGE_INITSCRIPTS = ""
 IMAGE_DEV_MANAGER = ""
+
+FEED_DEPLOYDIR_BASE_URI = ""
 
 inherit image

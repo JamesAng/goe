@@ -17,13 +17,11 @@ DPKG_ARCH_i686 ?= "i386"
 DPKG_ARCH_pentium ?= "i386"
 
 python package_deb_fn () {
-    from bb import data
     bb.data.setVar('PKGFN', bb.data.getVar('PKG',d), d)
 }
 
 addtask package_deb_install
 python do_package_deb_install () {
-    import os, sys
     pkg = bb.data.getVar('PKG', d, 1)
     pkgfn = bb.data.getVar('PKGFN', d, 1)
     rootfs = bb.data.getVar('IMAGE_ROOTFS', d, 1)
@@ -39,6 +37,7 @@ python do_package_deb_install () {
             os.makedirs(rootfs)
         os.chdir(rootfs)
     except OSError:
+        import sys
         raise bb.build.FuncFailed(str(sys.exc_value))
 
     # update packages file
@@ -69,14 +68,13 @@ python do_package_deb_install () {
 }
 
 python do_package_deb () {
-    import sys, re, copy
+    import re, copy
 
     workdir = bb.data.getVar('WORKDIR', d, 1)
     if not workdir:
         bb.error("WORKDIR not defined, unable to package")
         return
 
-    import os # path manipulations
     outdir = bb.data.getVar('DEPLOY_DIR_DEB', d, 1)
     if not outdir:
         bb.error("DEPLOY_DIR_DEB not defined, unable to package")
@@ -88,20 +86,12 @@ python do_package_deb () {
         return
     bb.mkdirhier(dvar)
 
-    packages = bb.data.getVar('PACKAGES', d, 1)
-    if not packages:
-        bb.debug(1, "PACKAGES not defined, nothing to package")
-        return
-
     tmpdir = bb.data.getVar('TMPDIR', d, 1)
 
     if os.access(os.path.join(tmpdir, "stamps", "DEB_PACKAGE_INDEX_CLEAN"),os.R_OK):
         os.unlink(os.path.join(tmpdir, "stamps", "DEB_PACKAGE_INDEX_CLEAN"))
 
-    if packages == []:
-        bb.debug(1, "No packages; nothing to do")
-        return
-
+    packages = bb.data.getVar('PACKAGES', d, 1)
     for pkg in packages.split():
         localdata = bb.data.createCopy(d)
         pkgdest = bb.data.getVar('PKGDEST', d, 1)
@@ -188,6 +178,7 @@ python do_package_deb () {
             for (c, fs) in fields:
                 ctrlfile.write(unicode(c % tuple(pullData(fs, localdata))))
         except KeyError:
+            import sys
             (type, value, traceback) = sys.exc_info()
             bb.utils.unlockfile(lf)
             ctrlfile.close()
@@ -261,7 +252,6 @@ python do_package_deb () {
 }
 
 python () {
-    import bb
     if bb.data.getVar('PACKAGES', d, True) != '':
         deps = (bb.data.getVarFlag('do_package_write_deb', 'depends', d) or "").split()
         deps.append('dpkg-native:do_populate_staging')
@@ -270,8 +260,13 @@ python () {
 }
 
 python do_package_write_deb () {
-	bb.build.exec_func("read_subpackage_metadata", d)
-	bb.build.exec_func("do_package_deb", d)
+    packages = bb.data.getVar('PACKAGES', d, True)
+    if not packages:
+        bb.debug(1, "No PACKAGES defined, nothing to package")
+        return
+
+    bb.build.exec_func("read_subpackage_metadata", d)
+    bb.build.exec_func("do_package_deb", d)
 }
 do_package_write_deb[dirs] = "${D}"
 addtask package_write_deb before do_package_write after do_package

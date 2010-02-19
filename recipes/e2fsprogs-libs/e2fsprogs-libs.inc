@@ -4,7 +4,7 @@ SECTION = "base"
 PRIORITY = "optional"
 DEPENDS = "util-linux-ng"
 
-inherit autotools_stage gettext pkgconfig
+inherit autotools_stage gettext
 
 SRC_URI = "${SOURCEFORGE_MIRROR}/e2fsprogs/e2fsprogs-libs-${PV}.tar.gz \
            file://configure.patch;patch=1 \
@@ -34,4 +34,13 @@ do_stage () {
         install -m 0644 lib/et/com_err.h ${STAGING_INCDIR}/et/
         install -m 0644 lib/ss/ss.h ${STAGING_INCDIR}/ss/
         install -m 0644 lib/ss/ss_err.h ${STAGING_INCDIR}/ss/
+}
+
+# avoid requiring unsupported util-linux-ng for nylon, provide uuid for others...
+DEPENDS_nylon = ""
+EXTRA_OECONF_nylon = ""
+do_stage_append_nylon() {
+        install -d ${STAGING_INCDIR}/uuid
+        install -m 0644 lib/uuid/uuid.h ${STAGING_INCDIR}/uuid/
+        install -m 0644 lib/uuid/libuuid.a ${STAGING_LIBDIR}/
 }

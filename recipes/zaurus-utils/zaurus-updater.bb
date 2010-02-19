@@ -1,7 +1,7 @@
 DESCRIPTION = "Encrypted shellscript for the Zaurus ROM update"
 DEPENDS = "encdec-updater-native"
 LICENSE = "zaurus-updater"
-PR = "r23"
+PR = "r24"
 
 PACKAGES = ""
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -34,5 +34,6 @@ do_deploy() {
 	esac
 }
 
-addtask deploy before do_build after do_compile
-PARALLEL_MAKE = ""
+# package_stagefile_shell need to run before populate_staging for packaged-staging
+addtask deploy before do_populate_staging after do_compile
+

@@ -5,7 +5,7 @@ SECTION = "console/network"
 DEPENDS = "python-cython-native python-pyrex-native"
 LICENSE = "GPL"
 PV = "0.9.5.9+gitr${SRCREV}"
-PR = "r0"
+PR = "r2"
 
 inherit distutils update-rc.d
 
@@ -16,6 +16,8 @@ SRC_URI = "${FREESMARTPHONE_GIT}/framework.git;protocol=git;branch=master \
            file://frameworkd \
            file://frameworkd.conf \
 	   "
+SRC_URI_append_shr = "file://oeventsd-use-opimd-signals.patch;patch=1"
+
 S = "${WORKDIR}/git"
 
 do_configure_append() {
@@ -26,6 +28,11 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/init.d/
 	install -m 0755 ${WORKDIR}/frameworkd ${D}${sysconfdir}/init.d/
 	install -m 0644 ${WORKDIR}/frameworkd.conf ${D}${sysconfdir}
+}
+
+pkg_postinst_${PN} () {
+	echo "NOTE: if you have old contacts without field types and the"
+	echo "      tel: prefix instead please use the remove-tel script"
 }
 
 RDEPENDS_${PN} += "\
@@ -55,6 +62,8 @@ RDEPENDS_${PN} += "\
 RRECOMMENDS_${PN} += "\
   alsa-utils-amixer \
   python-gst \
+  python-phoneutils \
+  python-vobject \
   ppp \
 "
 

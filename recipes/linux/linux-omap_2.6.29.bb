@@ -10,6 +10,7 @@ DEFAULT_PREFERENCE_overo = "1"
 DEFAULT_PREFERENCE_beagleboard = "1"
 DEFAULT_PREFERENCE_omap3-touchbook = "1"
 DEFAULT_PREFERENCE_omap3evm = "1"
+DEFAULT_PREFERENCE_omapzoom = "1"
 
 SRCREV = "58cf2f1425abfd3a449f9fe985e48be2d2555022"
 
@@ -169,6 +170,10 @@ SRC_URI_append = " \
            file://cache/copy-page-tweak.patch;patch=1 \
            file://2.6.29_relocation_1.patch;patch=1 \
            file://2.6.29_relocation_2.patch;patch=1 \
+           file://smsc/smsc911x-1.patch;patch=1 \
+           file://smsc/smsc911x-2.patch;patch=1 \
+           file://smsc/smsc911x-3.patch;patch=1 \
+           file://smsc/smsc911x-4.patch;patch=1 \
 "
 
 

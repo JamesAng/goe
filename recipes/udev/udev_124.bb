@@ -10,6 +10,7 @@ SRC_URI = "http://kernel.org/pub/linux/utils/kernel/hotplug/udev-${PV}.tar.gz \
 	   file://vol_id_ld.patch;patch=1 \
 	   file://udevtrigger_add_devname_filtering.patch;patch=1 \
 	   file://libvolume-id-soname.patch;patch=1 \
+	   file://mtd-exclude-persistent.patch;patch=1 \
 	   file://mount.blacklist \
 	   file://run.rules \
 	   file://default \

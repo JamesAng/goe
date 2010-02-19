@@ -118,9 +118,32 @@ do_configure_prepend() {
         if [ "${UDEV_GE_141}" = "1" ] ; then
             sed -e /CONFIG_SYSFS_DEPRECATED/d \
                 -e /CONFIG_SYSFS_DEPRECATED_V2/d \
+                -e /CONFIG_HOTPLUG/d \
+                -e /CONFIG_UEVENT_HELPER_PATH/d \
+                -e /CONFIG_UNIX/d \
+                -e /CONFIG_SYSFS/d \
+                -e /CONFIG_PROC_FS/d \
+                -e /CONFIG_TMPFS/d \
+                -e /CONFIG_INOTIFY_USER/d \
+                -e /CONFIG_SIGNALFD/d \
+                -e /CONFIG_TMPFS_POSIX_ACL/d \
+                -e /CONFIG_BLK_DEV_BSG/d \
                 -i '${S}/.config'
+
             echo '# CONFIG_SYSFS_DEPRECATED is not set' >> ${S}/.config
             echo '# CONFIG_SYSFS_DEPRECATED_V2 is not set' >> ${S}/.config
+            echo 'CONFIG_HOTPLUG=y' >> ${S}/.config
+            echo 'CONFIG_UEVENT_HELPER_PATH=""' >> ${S}/.config
+            echo 'CONFIG_UNIX=y' >> ${S}/.config
+            echo 'CONFIG_SYSFS=y' >> ${S}/.config
+            echo 'CONFIG_PROC_FS=y' >> ${S}/.config
+            echo 'CONFIG_TMPFS=y' >> ${S}/.config
+            echo 'CONFIG_INOTIFY_USER=y' >> ${S}/.config
+            echo 'CONFIG_SIGNALFD=y' >> ${S}/.config
+            echo 'CONFIG_TMPFS_POSIX_ACL=y' >> ${S}/.config
+            echo 'CONFIG_BLK_DEV_BSG=y' >> ${S}/.config
+            echo 'CONFIG_DEVTMPFS=y' >> ${S}/.config
+            echo 'CONFIG_DEVTMPFS_MOUNT=y' >> ${S}/.config
         fi
 
         #
@@ -164,6 +187,7 @@ do_devicetree_image() {
     if test -n "${KERNEL_DEVICETREE}" ; then
         dtc -I dts -O dtb ${KERNEL_DEVICETREE_FLAGS} -o devicetree ${KERNEL_DEVICETREE}
         install -m 0644 devicetree ${D}/boot/devicetree-${KERNEL_VERSION}
+        install -d ${DEPLOY_DIR_IMAGE}
         install -m 0644 devicetree ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.dtb
         cd ${DEPLOY_DIR_IMAGE}
         rm -f ${KERNEL_IMAGE_SYMLINK_NAME}.dtb
@@ -171,7 +195,7 @@ do_devicetree_image() {
     fi
 }
 
-addtask devicetree_image after do_deploy before do_package
+addtask devicetree_image after do_install before do_package do_deploy
 
 pkg_postinst_kernel-devicetree () {
 	cd /${KERNEL_IMAGEDEST}; update-alternatives --install /${KERNEL_IMAGEDEST}/devicetree devicetree devicetree-${KERNEL_VERSION} ${KERNEL_PRIORITY} || true
