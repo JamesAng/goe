@@ -1,6 +1,6 @@
 #@TYPE: Machine
-#@Name: Gumstix pxa2xx boards
-#@DESCRIPTION:  Gumstix pxa2xx boards
+#@Name: Gumstix pxa27x boards
+#@DESCRIPTION:  Gumstix pxa27x boards
 
 # Don't edit this file unless you *really* know what you are doing!
 

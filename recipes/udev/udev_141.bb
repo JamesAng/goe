@@ -28,7 +28,7 @@ SRC_URI += " \
        file://cache \
 "
 
-SRC_URI-gumstix-verdex = " \
+SRC_URI_append_gumstix-verdex = " \
 	file://50-firmware.rules \
 "
 
