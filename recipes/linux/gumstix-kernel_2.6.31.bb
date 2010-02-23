@@ -1,6 +1,5 @@
 require linux.inc
 
-DEFAULT_PREFERENCE = "-1"
 S = "${WORKDIR}/linux-${PV}"
 
 SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-${PV}.tar.bz2 \
@@ -19,6 +18,7 @@ SRC_URI_append = " \
 	file://modular-init-bluetooth.patch;patch=1 \
 	file://quiet-single-block-retry-warning.patch;patch=1 \
 	file://smsc911x.patch;patch=1 \
+	file://i2c-include.patch;patch=1 \
 	"
 
 
