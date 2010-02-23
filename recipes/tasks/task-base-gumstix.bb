@@ -8,11 +8,47 @@ PROVIDES = "${PACKAGES}"
 PACKAGES = ' \
             task-base-gumstix \
             task-base-gumstix-extended \
+            task-distro-base \
+            task-machine-base \
+            \
             task-boot-gumstix \
             ${@base_contains("MACHINE_FEATURES", "i2c", "task-base-gumstix-i2c", "",d)} \
             ${@base_contains("MACHINE_FEATURES", "spi", "task-base-gumstix-spi", "",d)} \
             ${@base_contains("MACHINE_FEATURES", "mmc", "task-base-gumstix-mmc", "",d)} \
             ${@base_contains("MACHINE_FEATURES", "ethernet", "task-base-gumstix-ethernet", "",d)} \
+            \
+            ${@base_contains("MACHINE_FEATURES", "acpi", "task-base-acpi", "",d)} \
+            ${@base_contains("MACHINE_FEATURES", "alsa", "task-base-alsa", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "apm", "task-base-apm", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "ext2", "task-base-ext2", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "vfat", "task-base-vfat", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "irda", "task-base-irda", "",d)} \
+            ${@base_contains("MACHINE_FEATURES", "keyboard", "task-base-keyboard", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "pci", "task-base-pci", "",d)} \
+            ${@base_contains("MACHINE_FEATURES", "pcmcia", "task-base-pcmcia", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "phone", "task-base-phone", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "screen", "task-base-screen", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "serial", "task-base-serial", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "touchscreen", "task-base-touchscreen", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "usbgadget", "task-base-usbgadget", "", d)} \
+            ${@base_contains("MACHINE_FEATURES", "usbhost", "task-base-usbhost", "", d)} \
+            \
+            ${@base_contains("MACHINE_FEATURES", "uboot", "task-base-uboot", "",d)} \
+            ${@base_contains("MACHINE_FEATURES", "redboot", "task-base-redboot", "",d)} \
+            ${@base_contains("MACHINE_FEATURES", "apex", "task-base-apex", "",d)} \
+            \
+            task-base-bluetooth \
+            task-base-wifi \
+            \
+            ${@base_contains("DISTRO_FEATURES", "cramfs", "task-base-cramfs", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "ipsec", "task-base-ipsec", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "ipv6", "task-base-ipv6", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "nfs", "task-base-nfs", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "ppp", "task-base-ppp", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "smbfs", "task-base-smbfs", "", d)} \
+            ${@base_contains("DISTRO_FEATURES", "raid", "task-base-raid", "",d)} \
+            \
+            ${@base_contains("MACHINE_FEATURES","kernel26","task-base-kernel26","task-base-kernel24",d)} \
             '
 
 #
@@ -67,10 +103,12 @@ RDEPENDS_task-base-gumstix = "\
     ${@base_contains('MACHINE_FEATURES', 'mmc', 'task-base-gumstix-mmc', '',d)} \
     ${@base_contains('MACHINE_FEATURES', 'ethernet', 'task-base-gumstix-ethernet', '',d)} \
     task-boot-gumstix \
+    \
     ${@base_contains('MACHINE_FEATURES', 'apm', 'task-base-apm', '',d)} \
     ${@base_contains('MACHINE_FEATURES', 'acpi', 'task-base-acpi', '',d)} \
     ${@base_contains('MACHINE_FEATURES', 'keyboard', 'task-base-keyboard', '',d)} \
     ${@base_contains('MACHINE_FEATURES', 'touchscreen', 'task-base-touchscreen', '',d)} \
+    \
     ${@base_contains('COMBINED_FEATURES', 'alsa', 'task-base-alsa', '',d)} \
     ${@base_contains('COMBINED_FEATURES', 'ext2', 'task-base-ext2', '',d)} \
     ${@base_contains('COMBINED_FEATURES', 'vfat', 'task-base-vfat', '',d)} \
@@ -84,6 +122,7 @@ RDEPENDS_task-base-gumstix = "\
     ${@base_contains('COMBINED_FEATURES', 'uboot', 'task-base-uboot', '',d)} \
     ${@base_contains('COMBINED_FEATURES', 'redboot', 'task-base-redboot', '',d)} \
     ${@base_contains('COMBINED_FEATURES', 'apex', 'task-base-apex', '',d)} \
+    \
     ${@base_contains('DISTRO_FEATURES', 'nfs', 'task-base-nfs', '',d)} \
     ${@base_contains('DISTRO_FEATURES', 'cramfs', 'task-base-cramfs', '',d)} \
     ${@base_contains('DISTRO_FEATURES', 'smbfs', 'task-base-smbfs', '',d)} \
@@ -418,7 +457,7 @@ RRECOMMENDS_task-base-gumstix-ethernet = "\
 
 RDEPENDS_task-boot-gumstix = "\
     pxaregs \
-    avahi \
+    bonjour \
     sysfsutils \
     util-linux-mount util-linux-umount \
     "
@@ -429,6 +468,8 @@ RRECOMMENDS_task-boot-gumstix = "\
     kernel-module-rtc-dev \
     kernel-module-rtc-proc \
     kernel-module-rtc-sysfs \
+    kernel-module-rtc-sa1100 \
+    kernel-module-sa1100-wdt \
     "
 
 # Tosort
