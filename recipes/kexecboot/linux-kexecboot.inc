@@ -1,5 +1,5 @@
-# We set PR here, since a change in the kexecboot recipe will need to get picked up by *all* the kernels:
-PR = "r18"
+# We set INC_PR here, since a change in the kexecboot recipe will need to get picked up by *all* the kernels:
+INC_PR = "r19"
 
 LOGO_SIZE = '${@base_conditional("GUI_MACHINE_CLASS", "bigscreen", "vga", "qvga", d)}'
 SRC_URI = "file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2"
@@ -44,11 +44,11 @@ def kernel_version_less_or_equal(variable, checkvalue, truevalue, falsevalue, d)
 # force lzma compression for kernel (linux-kexecboot >= 2.6.32)
 # force lzma compression for initramfs (linux-kexecboot >= 2.6.30)
 
-KERNEL_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.32", "", "CONFIG_KERNEL_LZMA=y", d)}'
+KERNEL_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.31", "", "CONFIG_KERNEL_LZMA=y", d)}'
 
-INITRAMFS_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.30", "", "CONFIG_INITRAMFS_COMPRESSION_LZMA=y", d)}'
-INITRAMFS_COMPRESSION_SUFFIX = '${@kernel_version_less_or_equal("PV", "2.6.30", "gz", "lzma", d)}'
-RD_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.30", "", "CONFIG_RD_LZMA=y", d)}'
+INITRAMFS_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.29", "", "CONFIG_INITRAMFS_COMPRESSION_LZMA=y", d)}'
+INITRAMFS_COMPRESSION_SUFFIX = '${@kernel_version_less_or_equal("PV", "2.6.29", "gz", "lzma", d)}'
+RD_COMPRESSION = '${@kernel_version_less_or_equal("PV", "2.6.29", "", "CONFIG_RD_LZMA=y", d)}'
 
 do_configure[depends] += "${INITRAMFS_IMAGE}:do_rootfs"
 
