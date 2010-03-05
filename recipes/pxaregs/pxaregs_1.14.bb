@@ -10,7 +10,7 @@ SRC_URI = "http://www.mn-logistik.de/unsupported/pxa250/pxaregs.c \
            file://munmap.patch;pnum=1;patch=1 \
            file://serial.patch;pnum=1;patch=1 \
            file://usb.patch;pnum=1;patch=1 \
-           file://pxa270.patch;patch=1 \
+           file://pxa270.patch;pnum=1;patch=1 \
 "
 
 S = "${WORKDIR}"
