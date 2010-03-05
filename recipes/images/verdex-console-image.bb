@@ -5,6 +5,7 @@ inherit image
 DEPENDS = "task-base-gumstix"
 
 IMAGE_EXTRA_INSTALL ?= ""
+IMAGE_LINGUAS = ""
 
 AUDIO_INSTALL = " \
   alsa-utils \
