@@ -22,7 +22,7 @@ SUBSYSTEM=="net", ACTION=="add" RUN+="/etc/udev/scripts/network.sh"
 SUBSYSTEM=="net", ACTION=="remove" RUN+="/etc/udev/scripts/network.sh"
 
 # The first rtc device is symlinked to /dev/rtc
-KERNEL=="rtc0", SYMLINK+="rtc"
+KERNEL=="rtc0", SYMLINK+="rtc misc/rtc"
 
 # Try and modprobe for drivers for new hardware
 ACTION=="add", DEVPATH=="/devices/*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe $env{MODALIAS}"

@@ -22,7 +22,7 @@ SUBSYSTEM=="net", ACTION=="add" RUN+="/etc/udev/scripts/network.sh"
 SUBSYSTEM=="net", ACTION=="remove" RUN+="/etc/udev/scripts/network.sh"
 
 # The first rtc device is symlinked to /dev/rtc
-KERNEL=="rtc0", SYMLINK+="rtc"
+KERNEL=="rtc0", SYMLINK+="rtc misc/rtc"
 
 #The first framebuffer is symlinked to /dev/fb
 KERNEL=="fb0",  SYMLINK+="fb"
@@ -34,6 +34,6 @@ ACTION=="add", DEVPATH=="/devices/*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe 
 SUBSYSTEM=="input", KERNEL=="event[0-9]*", SYSFS{modalias}=="input:*-e0*,3,*a0,1,*18,*", SYMLINK+="input/touchscreen0"
 SUBSYSTEM=="input", KERNEL=="event[0-9]*", SYSFS{modalias}=="ads7846", SYMLINK+="input/touchscreen0"
 
-# Rename wifi module (/class/net/ethX) (libertas_sdio|libertas_cf)
+# Rename wifi module (/class/net/ethX) (libertas_sdio|libertas_cs)
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="libertas_sdio", KERNEL=="eth*", NAME="wlan0"
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="libertas_cf", KERNEL=="eth*", NAME="wlan0"
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="libertas_cs", KERNEL=="eth*", NAME="wlan0"
