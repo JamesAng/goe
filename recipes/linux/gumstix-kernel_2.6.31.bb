@@ -19,6 +19,7 @@ SRC_URI_append = " \
 	file://quiet-single-block-retry-warning.patch;patch=1 \
 	file://smsc911x.patch;patch=1 \
 	file://i2c-include.patch;patch=1 \
+	file://libertas-eth-to-wlan.patch;patch=1 \
 	"
 
 
