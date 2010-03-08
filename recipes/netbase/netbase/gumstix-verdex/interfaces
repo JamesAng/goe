@@ -22,7 +22,7 @@ allow-hotplug wlan0
 iface wlan0 inet dhcp
 	wireless_mode managed
 	wireless_essid any
-#	pre-up /sbin/iwconfig $IFACE txpower auto
+	pre-up /sbin/iwconfig $IFACE txpower auto
 # 	wpa-driver wext
 #	wpa-conf /etc/wpa_supplicant.conf
 
