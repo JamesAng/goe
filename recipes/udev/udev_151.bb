@@ -31,10 +31,6 @@ SRC_URI += " \
        file://cache \
 "
 
-SRC_URI_append_gumstix-verdex = " \
-	file://50-firmware.rules \
-"
-
 SRC_URI_append_h2200 = " file://50-hostap_cs.rules "
 PACKAGE_ARCH_h2200 = "h2200"
 
@@ -112,8 +108,9 @@ do_install () {
 
 do_install_append_gumstix-verdex() {
 	# Fix firmware would not load via udev...
-	# Replace the old 50-firmware.rules to correct the /lib/udev/firmware.sh path
-	install -m 0644 ${WORKDIR}/50-firmware.rules ${D}${sysconfdir}/udev/rules.d/50-firmware.rules
+	# Add the new 50-firmware.rules from udev/extras/firmware to invoke the new (>=udev-1.51)
+	# /usr/libexec/firmware instead of the now obsolete firmware.sh script.
+	cp ${S}/extras/firmware/50-firmware.rules ${D}${sysconfdir}/udev/rules.d
 }
 
 do_install_append_h2200() {
