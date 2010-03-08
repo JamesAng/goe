@@ -7,6 +7,7 @@ SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-${PV}.tar.bz2 \
 	"
 
 SRC_URI_append = " \
+        file://logo_linux_clut224.ppm \
 	file://no-empty-flash-warnings.patch;patch=1 \
 	file://fix-install.patch;patch=1 \
 	file://gumstix-2.6.30.patch;patch=1 \
@@ -24,6 +25,9 @@ SRC_URI_append = " \
 
 
 do_configure_prepend() {
+
+       cp ${WORKDIR}/logo_linux_clut224.ppm ${S}/drivers/video/logo/
+
        # turn off frame buffer support in kernel if lcd MACHINE_FEATURES not defined    
        ${@base_contains('MACHINE_FEATURES', 'lcd','','sed -i "s/CONFIG_FB=m/# CONFIG_FB is not set/" ${WORKDIR}/defconfig',d)}
        ${@base_contains('MACHINE_FEATURES', 'lcd','','sed -i "s/CONFIG_FB_PXA=m/# CONFIG_FB_PXA is not set/" ${WORKDIR}/defconfig',d)}
