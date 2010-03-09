@@ -5,12 +5,15 @@ LICENSE = "Artistic|GPL"
 PRIORITY = "optional"
 # We need gnugrep (for -I)
 DEPENDS = "virtual/db perl-native grep-native"
-PR = "r29"
+PR = "r31"
 
 # Major part of version
 PVM = "5.8"
 
-SRC_URI = "ftp://ftp.funet.fi/pub/CPAN/src/perl-${PV}.tar.gz \
+SRC_URI[perl588targz.md5sum] = "b8c118d4360846829beb30b02a6b91a7"
+SRC_URI[perl588targz.sha256sum] = "e15d499321e003d12ed183601e37ee7ba5f64b278d1de30149ce01bd4a3f234d"
+
+SRC_URI = "http://ftp.funet.fi/pub/CPAN/src/5.0/perl-5.8.8.tar.gz;name=perl588targz \
         file://Makefile.patch;patch=1 \
         file://Makefile.SH.patch;patch=1 \
         file://makedepend-dash.patch;patch=1 \
@@ -141,12 +144,11 @@ do_install() {
         fi
 }
 do_stage() {
-        install -d ${STAGING_DIR_HOST}/perl \
-                   ${STAGING_LIBDIR_NATIVE}/perl/${PV} \
+        install -d ${STAGING_LIBDIR_NATIVE}/perl/${PV} \
                    ${STAGING_LIBDIR}/perl/${PV}/CORE \
                    ${STAGING_DATADIR}/perl/${PV}/ExtUtils
         # target config, used by cpan.bbclass to extract version information
-        install config.sh ${STAGING_DIR_HOST}/perl/
+        install config.sh ${STAGING_LIBDIR}/perl/
         # target configuration, used by native perl when cross-compiling
         install lib/Config_heavy.pl ${STAGING_LIBDIR_NATIVE}/perl/${PV}/Config_heavy-target.pl
 	# target configuration

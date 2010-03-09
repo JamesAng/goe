@@ -1,7 +1,7 @@
 DEPENDS += "cairo"
 PR = "r9"
 
-SRC_URI = "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${PV}/source/firefox-${PV}-source.tar.bz2 \
+SRC_URI = "ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${PV}/source/firefox-${PV}-source.tar.bz2 \
 	file://jsautocfg.h \
 	file://security-cross.patch;patch=1 \
 	file://jsautocfg-dontoverwrite.patch;patch=1 \
@@ -23,7 +23,6 @@ S = "${WORKDIR}/mozilla"
 inherit mozilla
 require firefox.inc
 
-export HOST_LIBIDL_CONFIG = "${STAGING_BINDIR_NATIVE}/libIDL-config-2"
 FULL_OPTIMIZATION = "-fexpensive-optimizations -fomit-frame-pointer -frename-registers -O2"
 
 do_compile_prepend() {

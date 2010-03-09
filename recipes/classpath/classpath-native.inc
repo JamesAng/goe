@@ -30,11 +30,11 @@ EXTRA_OECONF = "\
   --disable-gtk-peer \
   --disable-plugin \
   --disable-dssi \
+  --disable-gjdoc \
   --enable-examples \
   --enable-tools \
   --includedir=${STAGING_INCDIR}/classpath \
   --with-vm=java \
-  --enable-tool-wrappers \
   "
 
 do_stage() {

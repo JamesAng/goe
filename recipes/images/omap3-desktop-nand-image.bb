@@ -2,49 +2,41 @@
 
 require omap3-console-image.bb
 
-IMAGE_LINGUAS = "de-de fr-fr en-gb en-us pt-br es-es"
+IMAGE_LINGUAS = "en-us"
 
 ANGSTROM_EXTRA_INSTALL ?= ""
 
 SPLASH ?= "psplash"
-#SPLASH ?= "exquisite exquisite-themes exquisite-theme-angstrom"
 
 APPS = " \
   abiword-meta \
   claws-mail \
   evince \
-  firefox \
   gnome-games \
   gnome-mplayer \
   gnumeric \
   gpe-soundbite \
-#  libgles-omap3-demos \
+  midori \
   pidgin \
   vnc \
   x11vnc \
   angstrom-x11vnc-xinit \
-  xmms \
   xterm \
  "
 
 E_CONFIG = " \
   e-wm-config-angstrom \
-  e-wm-config-illume \
-  e-wm-config-standard \
-  e-wm-config-netbook \
-  e-wm-config-default \
-  e-wm-config-minimalist \
-  e-wm-config-scaleable \
+  e-wm-config-angstrom-touchscreen \
+  e-wm-config-angstrom-widescreen \
  "
 
 E_MODULES = " \
-  news \
   places \
  "
 
 E17 = " \
   e-wm \
-  entrance \
+  e-wm-menu \
   e-wm-sysactions \
   ${E_CONFIG} \
   ${E_MODULES} \
@@ -57,14 +49,8 @@ FONTS = " \
   ttf-dejavu-sans-mono \
  "  
 
-PRINT = " \
-  cups \
-  gnome-cups-manager \
-  gtk-printbackend-cups \
- "
-
 SETTINGS = " \
-  network-manager-applet \
+  networkmanager network-manager-applet networkmanager-openvpn \
   gnome-bluetooth \
   gpe-conf \
   gpe-package \
@@ -94,7 +80,6 @@ IMAGE_INSTALL += " \
   ${APPS} \
   ${E17} \
   ${FONTS} \
-  ${PRINT} \
   ${SETTINGS} \
   ${SPLASH} \
   ${XSERVER_BASE} \

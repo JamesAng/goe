@@ -2,7 +2,14 @@
 # General packaging help functions
 #
 
-PKGDEST = "${WORKDIR}/install"
+PKGD    = "${WORKDIR}/package"
+PKGDEST = "${WORKDIR}/packages-split"
+
+PKGV	?= "${PV}"
+PKGR	?= "${PR}${DISTRO_PR}"
+
+EXTENDPKGEVER = "${@['','${PKGE\x7d:'][bb.data.getVar('PKGE',d,1) > 0]}"
+EXTENDPKGV ?= "${EXTENDPKGEVER}${PKGV}-${PKGR}"
 
 def legitimize_package_name(s):
 	"""
@@ -26,12 +33,8 @@ def do_split_packages(d, root, file_regex, output_pattern, description, postinst
 	Used in .bb files to split up dynamically generated subpackages of a 
 	given package, usually plugins or modules.
 	"""
-	import os, os.path, bb
 
-	dvar = bb.data.getVar('D', d, True)
-	if not dvar:
-		bb.error("D not defined")
-		return
+	dvar = bb.data.getVar('PKGD', d, True)
 
 	packages = bb.data.getVar('PACKAGES', d, True).split()
 
@@ -132,7 +135,6 @@ def package_stash_hook(func, name, d):
 	f.close()
 
 python () {
-    import bb
     if bb.data.getVar('PACKAGES', d, True) != '':
         deps = bb.data.getVarFlag('do_package', 'depends', d) or ""
         for dep in (bb.data.getVar('PACKAGE_DEPENDS', d, True) or "").split():
@@ -150,7 +152,7 @@ def runstrip(file, d):
     # A working 'file' (one which works on the target architecture)
     # is necessary for this stuff to work, hence the addition to do_package[depends]
 
-    import bb, os, commands, stat
+    import commands, stat
 
     pathprefix = "export PATH=%s; " % bb.data.getVar('PATH', d, True)
 
@@ -205,6 +207,26 @@ def runstrip(file, d):
 
     return 1
 
+PACKAGESTRIPFUNCS += "do_runstrip"
+python do_runstrip() {
+	import stat
+
+	dvar = bb.data.getVar('PKGD', d, True)
+	def isexec(path):
+		try:
+			s = os.stat(path)
+		except (os.error, AttributeError):
+			return 0
+		return (s[stat.ST_MODE] & stat.S_IEXEC)
+
+	for root, dirs, files in os.walk(dvar):
+		for f in files:
+			file = os.path.join(root, f)
+			if not os.path.islink(file) and not os.path.isdir(file) and isexec(file):
+				runstrip(file, d)
+}
+
+
 def write_package_md5sums (root, outfile, ignorepaths):
     # For each regular file under root, writes an md5sum to outfile.
     # With thanks to patch.bbclass.
@@ -255,8 +277,6 @@ def write_package_md5sums (root, outfile, ignorepaths):
 #
 
 def get_package_mapping (pkg, d):
-	import bb, os
-
 	data = read_subpkgdata(pkg, d)
 	key = "PKG_%s" % pkg
 
@@ -266,8 +286,6 @@ def get_package_mapping (pkg, d):
 	return pkg
 
 def runtime_mapping_rename (varname, d):
-	import bb, os
-
 	#bb.note("%s before: %s" % (varname, bb.data.getVar(varname, d, True)))	
 
 	new_depends = []
@@ -289,8 +307,6 @@ def runtime_mapping_rename (varname, d):
 #
 
 python package_do_split_locales() {
-	import os
-
 	if (bb.data.getVar('PACKAGE_NO_LOCALE', d, True) == '1'):
 		bb.debug(1, "package requested not splitting locales")
 		return
@@ -302,15 +318,8 @@ python package_do_split_locales() {
 		bb.note("datadir not defined")
 		return
 
-	dvar = bb.data.getVar('D', d, True)
-	if not dvar:
-		bb.error("D not defined")
-		return
-
+	dvar = bb.data.getVar('PKGD', d, True)
 	pn = bb.data.getVar('PN', d, True)
-	if not pn:
-		bb.error("PN not defined")
-		return
 
 	if pn + '-locale' in packages:
 		packages.remove(pn + '-locale')
@@ -343,42 +352,29 @@ python package_do_split_locales() {
 	bb.data.setVar('PACKAGES', ' '.join(packages), d)
 }
 
-python populate_packages () {
-	import glob, stat, errno, re
+python perform_packagecopy () {
+	dest = bb.data.getVar('D', d, True)
+	dvar = bb.data.getVar('PKGD', d, True)
 
-	workdir = bb.data.getVar('WORKDIR', d, True)
-	if not workdir:
-		bb.error("WORKDIR not defined, unable to package")
-		return
-
-	import os # path manipulations
-	outdir = bb.data.getVar('DEPLOY_DIR', d, True)
-	if not outdir:
-		bb.error("DEPLOY_DIR not defined, unable to package")
-		return
-	bb.mkdirhier(outdir)
-
-	dvar = bb.data.getVar('D', d, True)
-	if not dvar:
-		bb.error("D not defined, unable to package")
-		return
 	bb.mkdirhier(dvar)
 
+	# Start by package population by taking a copy of the installed 
+	# files to operate on
+	os.system('rm -rf %s/*' % (dvar))
+	os.system('cp -pPR %s/* %s/' % (dest, dvar))
+}
+
+python populate_packages () {
+	import glob, errno, re,os
+
+	workdir = bb.data.getVar('WORKDIR', d, True)
+	outdir = bb.data.getVar('DEPLOY_DIR', d, True)
+	dvar = bb.data.getVar('PKGD', d, True)
 	packages = bb.data.getVar('PACKAGES', d, True)
-
 	pn = bb.data.getVar('PN', d, True)
-	if not pn:
-		bb.error("PN not defined")
-		return
 
+	bb.mkdirhier(outdir)
 	os.chdir(dvar)
-
-	def isexec(path):
-		try:
-			s = os.stat(path)
-		except (os.error, AttributeError):
-			return 0
-		return (s[stat.ST_MODE] & stat.S_IEXEC)
 
 	# Sanity check PACKAGES for duplicates - should be moved to 
 	# sanity.bbclass once we have the infrastucture
@@ -392,12 +388,10 @@ python populate_packages () {
 		else:
 			package_list.append(pkg)
 
+
 	if (bb.data.getVar('INHIBIT_PACKAGE_STRIP', d, True) != '1'):
-		for root, dirs, files in os.walk(dvar):
-			for f in files:
-				file = os.path.join(root, f)
-				if not os.path.islink(file) and not os.path.isdir(file) and isexec(file):
-					runstrip(file, d)
+		for f in (bb.data.getVar('PACKAGESTRIPFUNCS', d, True) or '').split():
+			bb.build.exec_func(f, d)
 
 	pkgdest = bb.data.getVar('PKGDEST', d, True)
 	os.system('rm -rf %s' % pkgdest)
@@ -451,8 +445,8 @@ python populate_packages () {
 			dpath = os.path.dirname(fpath)
 			bb.mkdirhier(dpath)
 			ret = bb.copyfile(file, fpath)
-			if ret is False or ret == 0:
-				raise bb.build.FuncFailed("File population failed")
+			if ret is False:
+				raise bb.build.FuncFailed("File population failed when copying %s to %s" % (file, fpath))
 			if pkg == main_pkg and main_is_empty:
 				main_is_empty = 0
 		del localdata
@@ -501,7 +495,7 @@ python populate_packages () {
 	for pkg in package_list:
 		rdepends = explode_deps(bb.data.getVar('RDEPENDS_' + pkg, d, 0) or bb.data.getVar('RDEPENDS', d, 0) or "")
 
-		remstr = "${PN} (= ${EXTENDPV})"
+		remstr = "${PN} (= ${EXTENDPKGV})"
 		if main_is_empty and remstr in rdepends:
 			rdepends.remove(remstr)
 		for l in dangling_links[pkg]:
@@ -542,6 +536,7 @@ python emit_pkgdata() {
  		return
 
 	packages = bb.data.getVar('PACKAGES', d, True)
+	pkgdest = bb.data.getVar('PKGDEST', d, 1)
 	pkgdatadir = bb.data.getVar('PKGDATA_DIR', d, True)
 
 	pstageactive = bb.data.getVar('PSTAGING_ACTIVE', d, True)
@@ -562,6 +557,8 @@ python emit_pkgdata() {
 		write_if_exists(sf, pkg, 'PN')
 		write_if_exists(sf, pkg, 'PV')
 		write_if_exists(sf, pkg, 'PR')
+		write_if_exists(sf, pkg, 'PKGV')
+		write_if_exists(sf, pkg, 'PKGR')
 		write_if_exists(sf, pkg, 'DESCRIPTION')
 		write_if_exists(sf, pkg, 'RDEPENDS')
 		write_if_exists(sf, pkg, 'RPROVIDES')
@@ -585,7 +582,7 @@ python emit_pkgdata() {
 		allow_empty = bb.data.getVar('ALLOW_EMPTY_%s' % pkg, d, True)
 		if not allow_empty:
 			allow_empty = bb.data.getVar('ALLOW_EMPTY', d, True)
-		root = "%s/install/%s" % (workdir, pkg)
+		root = "%s/%s" % (pkgdest, pkg)
 		os.chdir(root)
 		g = glob('*') + glob('.[!.]*')
 		if g or allow_empty == "1":
@@ -608,7 +605,7 @@ fi
 SHLIBSDIR = "${STAGING_DIR_HOST}/shlibs"
 
 python package_do_shlibs() {
-	import os, re, os.path
+	import re
 
 	exclude_shlibs = bb.data.getVar('EXCLUDE_FROM_SHLIBS', d, 0)
 	if exclude_shlibs:
@@ -621,13 +618,10 @@ python package_do_shlibs() {
 	packages = bb.data.getVar('PACKAGES', d, True)
 
 	workdir = bb.data.getVar('WORKDIR', d, True)
-	if not workdir:
-		bb.error("WORKDIR not defined")
-		return
 
-	ver = bb.data.getVar('PV', d, True)
+	ver = bb.data.getVar('PKGV', d, True)
 	if not ver:
-		bb.error("PV not defined")
+		bb.error("PKGV not defined")
 		return
 
 	pkgdest = bb.data.getVar('PKGDEST', d, True)
@@ -655,7 +649,9 @@ python package_do_shlibs() {
 		needs_ldconfig = False
 		bb.debug(2, "calculating shlib provides for %s" % pkg)
 
-		pkgver = bb.data.getVar('PV_' + pkg, d, True)
+		pkgver = bb.data.getVar('PKGV_' + pkg, d, True)
+		if not pkgver:
+			pkgver = bb.data.getVar('PV_' + pkg, d, True)
 		if not pkgver:
 			pkgver = ver
 
@@ -784,15 +780,10 @@ python package_do_shlibs() {
 }
 
 python package_do_pkgconfig () {
-	import re, os
+	import re
 
 	packages = bb.data.getVar('PACKAGES', d, True)
-
 	workdir = bb.data.getVar('WORKDIR', d, True)
-	if not workdir:
-		bb.error("WORKDIR not defined")
-		return
-
 	pkgdest = bb.data.getVar('PKGDEST', d, True)
 
 	shlibs_dir = bb.data.getVar('SHLIBSDIR', d, True)
@@ -1012,8 +1003,10 @@ python package_depchains() {
 				pkg_addrrecs(pkg, base, suffix, func, rdeps, d)
 }
 
-
-PACKAGEFUNCS ?= "package_do_split_locales \
+PACKAGE_PREPROCESS_FUNCS ?= ""
+PACKAGEFUNCS ?= "perform_packagecopy \
+                ${PACKAGE_PREPROCESS_FUNCS} \
+		package_do_split_locales \
 		populate_packages \
 		package_do_shlibs \
 		package_do_pkgconfig \
@@ -1057,6 +1050,16 @@ python package_do_package () {
 	packages = (bb.data.getVar('PACKAGES', d, True) or "").split()
 	if len(packages) < 1:
 		bb.debug(1, "No packages to build, skipping do_package")
+		return
+
+	workdir = bb.data.getVar('WORKDIR', d, True)
+	outdir = bb.data.getVar('DEPLOY_DIR', d, True)
+	dest = bb.data.getVar('D', d, True)
+	dvar = bb.data.getVar('PKGD', d, True)
+	pn = bb.data.getVar('PN', d, True)
+
+	if not workdir or not outdir or not dest or not dvar or not pn or not packages:
+		bb.error("WORKDIR, DEPLOY_DIR, D, PN and PKGD all must be defined, unable to package")
 		return
 
 	for f in (bb.data.getVar('PACKAGEFUNCS', d, True) or '').split():

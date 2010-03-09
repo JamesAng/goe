@@ -5,7 +5,7 @@ LICENSE = "LGPLv2"
 DEPENDS = "elementary vpnc wpa-supplicant ecore eet edbus"
 RDEPENDS = "vpnc wpa-supplicant"
 
-PV = "0.9+svnr${SRCREV}"
+PV = "0.9+svnr${SRCPV}"
 
 inherit e
 
@@ -23,10 +23,6 @@ do_install_append() {
 	# install dbus service file
 	install -d ${D}${datadir}/dbus-1/system-services/	
 	install -m 0644 org.e.Exalt.service ${D}${datadir}/dbus-1/system-services/
-}
-
-do_stage() {
-	autotools_stage_all
 }
 
 FILES_${PN} += "${datadir}/dbus-1"

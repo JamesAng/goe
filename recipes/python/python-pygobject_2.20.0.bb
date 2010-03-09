@@ -1,7 +1,7 @@
 DESCRIPTION = "Python GObject bindings"
 SECTION = "devel/python"
 LICENSE = "LGPL"
-DEPENDS = "python-pygobject-native-${PV}"
+DEPENDS = "libffi python-pygobject-native-${PV}"
 PE = "1"
 
 MAJ_VER = "${@bb.data.getVar('PV',d,1).split('.')[0]}.${@bb.data.getVar('PV',d,1).split('.')[1]}"
@@ -19,6 +19,8 @@ inherit autotools distutils-base pkgconfig
 # necessary to let the call for python-config succeed
 export BUILD_SYS
 export HOST_SYS
+
+export GOBJECT_INTROSPECTION_CFLAGS="-pthread -I${STAGING_INCDIR}/gobject-introspection-1.0 -I${STAGING_INCDIR}/glib-2.0 -I${STAGING_LIBDIR}/glib-2.0/include"
 
 do_stage() {
 	autotools_stage_all

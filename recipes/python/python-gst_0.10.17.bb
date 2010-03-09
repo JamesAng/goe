@@ -3,6 +3,8 @@ SECTION = "devel/python"
 LICENSE = "LGPL"
 DEPENDS = "gstreamer gst-plugins-base python-pygobject"
 
+PR = "r1"
+
 SRC_URI = "\
   http://gstreamer.freedesktop.org/src/gst-python/gst-python-${PV}.tar.bz2 \
   file://python-path.patch;patch=1 \
@@ -17,6 +19,9 @@ require fix-path.inc
 EXTRA_OECONF += "--with-python-includes=${STAGING_INCDIR}/../"
 
 do_configure_prepend() {
+    #install all except libtool
+    rm -f ${S}/common/m4/libtool.m4
+    rm -f ${S}/common/m4/lt*.m4
     install -d ${S}/m4
     install -m 0644 ${S}/common/m4/*.m4 ${S}/m4/
 }

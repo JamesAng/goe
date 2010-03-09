@@ -47,10 +47,12 @@ TOOLS_INSTALL = " \
   openssh-misc \
   openssh-scp \
   openssh-ssh \
+  overo-writeprom \
   procps \
   socat \
   strace \
   sudo \
+  syslog-ng \
   task-proper-tools \
   u-boot-tools-env \
  "

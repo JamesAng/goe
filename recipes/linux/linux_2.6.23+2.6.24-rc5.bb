@@ -6,7 +6,7 @@ DEFAULT_PREFERENCE = "-1"
 PR = "r3"
 
 SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-2.6.23.tar.bz2 \
-	   ${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/testing/patch-2.6.24-rc5.bz2;patch=1 \
+	   ${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/testing/v2.6.24/patch-2.6.24-rc5.bz2;patch=1 \
            file://defconfig \
 	   "
 
@@ -63,5 +63,5 @@ python do_compulab_image() {
 	    os.symlink(img_file, link_file)
 }
 
-addtask compulab_image after do_deploy before do_package
+addtask compulab_image after do_deploy before do_build
 

@@ -1,5 +1,7 @@
 require linux-kexecboot.inc
 
+PR = "${INC_PR}.0"
+
 DEFAULT_PREFERENCE = "-1"
 DEFAULT_PREFERENCE_qemuarm = "-1"
 DEFAULT_PREFERENCE_qemux86 = "-1"
@@ -52,7 +54,7 @@ SRC_URI += "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-2.6.26.tar.bz2 \
            file://connectplus-prevent-oops-HACK.patch;patch=1;status=hack \
            file://htcuni.patch;patch=1 \
            file://versatile-armv6.patch;patch=1 \
-           "	
+           file://defconfig"
 
 # FIXMEs before made default	   
 # ${RPSRC}/mmcsd_no_scr_check-r1.patch;patch=1;status=hack

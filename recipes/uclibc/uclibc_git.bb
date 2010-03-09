@@ -1,4 +1,4 @@
-# UCLIBC_BASE should be the latest released revision of uclibc (that way
+# UCLIBC_BASE should be the latest released version of uclibc (that way
 # the config files will typically be correct!)  uclibc-svn takes precedence
 # over uclibc-${UCLIBC_BASE}, if a config file in uclibc-snv is out of date
 # try removing it
@@ -7,7 +7,7 @@
 # on whether the base patches apply to the selected (SRCDATE) svn release.
 #
 UCLIBC_BASE ?= "0.9.30"
-SRCREV="b364abfd3f728894120996d5da2565614132708f"
+SRCREV="63859f89f327e48037a4cdba982cd6afa3007da7"
 PV = "${UCLIBC_BASE}+gitr${SRCREV}"
 DEFAULT_PREFERENCE = "-1"
 #DEFAULT_PREFERENCE is 0 (empty), releases have a preference of 1 so take
@@ -32,7 +32,6 @@ SRC_URI = "git://uclibc.org/uClibc.git;branch=master;protocol=git \
 	file://uClibc.distro \
 	file://uclibc-arm-ftruncate64.patch;patch=1 \
 	file://uclibc_enable_log2_test.patch;patch=1 \
-	file://uclibc_ldso_use_O0.patch;patch=1 \
 	file://ldso_use_arm_dl_linux_resolve_in_thumb_mode.patch;patch=1 \
 	"
 S = "${WORKDIR}/git"

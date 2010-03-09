@@ -1,0 +1,14 @@
+--- robostix/gumstix/Makefile.orig	2010-02-18 14:19:16.883219570 -0800
++++ robostix/gumstix/Makefile	2010-02-18 14:22:13.427719528 -0800
+@@ -5,9 +5,9 @@
+ #############################################################################
+ 
+ ifeq ($(DEBUG),y)
+-	CFLAGS += -O -g		# -O is need to expand inlines
++	EXTRA_CFLAGS += -O -g		# -O is need to expand inlines
+ else
+-	CFLAGS += -O2
++	EXTRA_CFLAGS += -O2
+ endif
+ 
+ #----------------------------------------------------------------------------

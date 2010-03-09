@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+
+start() {
+        echo "Starting Marvell Wifi CF8385..."
+
+        # Make sure Power is turned on
+	/sbin/modprobe proc-gpio
+        echo GPIO out set  > /proc/gpio/GPIO80
+
+        # Simulate a udev hotplug insert event
+        /sbin/pccardctl eject
+        /sbin/pccardctl insert
+}
+stop() {
+        echo "Stopping Marvell Wifi CF8385..."
+        /sbin/pccardctl eject
+
+        # Make sure Power is turned off
+        echo GPIO out clear  > /proc/gpio/GPIO80
+}
+restart() {
+        stop
+        start
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?
+

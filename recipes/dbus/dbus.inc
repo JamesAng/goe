@@ -4,10 +4,10 @@ SECTION = "base"
 LICENSE = "GPL"
 DEPENDS = "expat glib-2.0 virtual/libintl libsm libice virtual/libx11"
 
-INC_PR = "r16"
+INC_PR = "r17"
 
 SRC_URI = "\
-  http://dbus.freedesktop.org/releases/dbus/dbus-${PV}.tar.gz \
+  http://dbus.freedesktop.org/releases/dbus/dbus-${PV}.tar.gz;name=dbus \
   file://cross.patch;patch=1 \
   file://tmpdir.patch;patch=1 \
   file://fix-install-daemon.patch;patch=1 \
@@ -19,6 +19,8 @@ S = "${WORKDIR}/dbus-${PV}"
 
 inherit autotools pkgconfig update-rc.d gettext
 
+EXTRA_OECONF_X = "--with-x"
+
 EXTRA_OECONF = "\
   --disable-qt \
   --disable-qt3 \
@@ -27,9 +29,10 @@ EXTRA_OECONF = "\
   --disable-checks \
   --disable-xml-docs \
   --disable-doxygen-docs \
+  --disable-libaudit \
   --with-xml=expat \
-  --with-x \
   --with-dbus-default-reply-timeout=200000 \
+  ${EXTRA_OECONF_X} \
 "
 
 do_compile_prepend_mipsel() {
@@ -44,12 +47,6 @@ do_install_append() {
                 install -d  ${D}${libexecdir}/
                 install -m 0755 bus/.libs/dbus-daemon-launch-helper ${D}${libexecdir}/
         fi
-}
-do_stage() {
-        oe_libinstall -so -C dbus libdbus-1 ${STAGING_LIBDIR}
-        autotools_stage_includes
-        mkdir -p ${STAGING_LIBDIR}/dbus-1.0/include/dbus/
-        install -m 0644 dbus/dbus-arch-deps.h ${STAGING_LIBDIR}/dbus-1.0/include/dbus/
 }
 
 RDEPENDS_${PN}-x11 = "${PN}"

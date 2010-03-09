@@ -1,0 +1,6 @@
+The patch sets a root password on /et/passswd, this password is:
+
+gumstix
+
+This allows ssh (dropbear) login to a gumstix using that
+password.
