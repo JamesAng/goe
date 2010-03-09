@@ -23,7 +23,7 @@ Index: u-boot-1.2.0/Makefile
  delta_config :
  	@$(MKCONFIG) $(@:_config=) arm pxa delta
  
-+gumstix-verdex_config	:	unconfig
++gumstix_config	:	unconfig
 +	@./mkconfig $(@:_config=) arm pxa gumstix
 +
  innokom_config	:	unconfig

@@ -75,7 +75,7 @@ Index: u-boot-1.2.0/board/gumstix/config.mk
 +	PLATFORM_CPPFLAGS += -DGUMSTIX_PXA255
 +endif
 +ifeq ("$(BR2_TARGET_GUMSTIX_VERDEX)$(BR2_TARGET_GUMSTIX_BASIXCONNEX)","")
-+	$(error You need to specify either BR2_TARGET_GUMSTIX_BASIXCONNEX or BR2_TARGET_GUMSTIX_VERDEX)
++     $(error You need to specify either BR2_TARGET_GUMSTIX_BASIXCONNEX or BR2_TARGET_GUMSTIX_VERDEX)
 +endif
 +ifeq ($(GUMSTIX_200MHZ),y)
 +	PLATFORM_CPPFLAGS += -DCONFIG_GUMSTIX_CPUSPEED_200
@@ -93,7 +93,7 @@ Index: u-boot-1.2.0/board/gumstix/config.mk
 +	PLATFORM_CPPFLAGS += -DCONFIG_GUMSTIX_CPUSPEED_600
 +endif
 +ifeq ("$(GUMSTIX_200MHZ)$(GUMSTIX_300MHZ)$(GUMSTIX_400MHZ)$(GUMSTIX_500MHZ)$(GUMSTIX_600MHZ)","")
-+	$(error You need to specify a CPU speed via GUMSTIX_nnnMHZ)
++     $(error You need to specify a CPU speed via GUMSTIX_nnnMHZ)
 +endif
 +PLATFORM_CPPFLAGS += -DSVN_REVISION='"$(SVN_REVISION)"'
 Index: u-boot-1.2.0/board/gumstix/gumstix.c

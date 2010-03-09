@@ -36,8 +36,8 @@ SRC_URI_append_gumstix-verdex = " \
 	file://common/tools-Makefile.patch;patch=1 \
 	"
 
-EXTRA_OEMAKE_gumstix = "CROSS_COMPILE=${TARGET_PREFIX} GUMSTIX_400MHZ=${GUMSTIX_400MHZ}"
-TARGET_LDFLAGS = ""
+# just set the variable manually
+GUMSTIX_400MHZ="y"
 
 def gumstix_mhz(d):
 	import bb
@@ -47,11 +47,17 @@ def gumstix_mhz(d):
 	else:
 		return '200'
 
-UBOOT_IMAGE_gumstix = "u-boot-${MACHINE}-${@gumstix_mhz(d)}Mhz-${PV}-${PR}.bin"
+EXTRA_OEMAKE_gumstix-verdex = "CROSS_COMPILE=${TARGET_PREFIX} GUMSTIX_400MHZ=${GUMSTIX_400MHZ}"
+TARGET_LDFLAGS = ""
+
+UBOOT_IMAGE_gumstix-verdex = "u-boot-${MACHINE}-${@gumstix_mhz(d)}Mhz-${PV}-${PR}.bin"
 
 inherit base
 
 do_compile () {
-	oe_runmake ${UBOOT_MACHINE}
+	# specify gumstix_config directly rather than dealing with
+	# machine type 'gumstix-verdex directly
+	#oe_runmake ${UBOOT_MACHINE}
+	oe_runmake gumstix_config
 	oe_runmake all
 }
