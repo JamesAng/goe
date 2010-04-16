@@ -1,0 +1,73 @@
+Index: u-boot-1.2.0/drivers/smc91111.c
+===================================================================
+--- u-boot-1.2.0.orig/drivers/smc91111.c
++++ u-boot-1.2.0/drivers/smc91111.c
+@@ -81,7 +81,7 @@ static const char version[] =
+ 
+ /* Autonegotiation timeout in seconds */
+ #ifndef CONFIG_SMC_AUTONEG_TIMEOUT
+-#define CONFIG_SMC_AUTONEG_TIMEOUT 10
++#define CONFIG_SMC_AUTONEG_TIMEOUT 3
+ #endif
+ 
+ /*------------------------------------------------------------------------
+@@ -1412,7 +1412,7 @@ static void smc_phy_configure ()
+ 	word status = 0;	/*;my status = 0 */
+ 	int failed = 0;
+ 
+-	PRINTK3 ("%s: smc_program_phy()\n", SMC_DEV_NAME);
++	PRINTK2 ("%s: smc_program_phy()\n", SMC_DEV_NAME);
+ 
+ 
+ 	/* Get the detected phy address */
+@@ -1421,6 +1421,10 @@ static void smc_phy_configure ()
+ 	/* Reset the PHY, setting all other bits to zero */
+ 	smc_write_phy_register (PHY_CNTL_REG, PHY_CNTL_RST);
+ 
++	// The internal PHY is guaranteed to be ready for normal operation 50 mS after the RST bit is set.
++	// Software driver requires to wait for 50mS after setting the RST bit high to access the internal PHY again
++	smc_wait_ms(50);
++
+ 	/* Wait for the reset to complete, or time out */
+ 	timeout = 6;		/* Wait up to 3 seconds */
+ 	while (timeout--) {
+@@ -1430,7 +1434,7 @@ static void smc_phy_configure ()
+ 			break;
+ 		}
+ 
+-		smc_wait_ms (500);	/* wait 500 millisecs */
++		smc_wait_ms (10);	/* wait 10 millisecs (guaranteed ready after 50ms)*/
+ 	}
+ 
+ 	if (timeout < 1) {
+@@ -1486,7 +1490,7 @@ static void smc_phy_configure ()
+ 	/* Wait for the auto-negotiation to complete.  This may take from */
+ 	/* 2 to 3 seconds. */
+ 	/* Wait for the reset to complete, or time out */
+-	timeout = CONFIG_SMC_AUTONEG_TIMEOUT * 2;
++	timeout = CONFIG_SMC_AUTONEG_TIMEOUT * 100;
+ 	while (timeout--) {
+ 
+ 		status = smc_read_phy_register (PHY_STAT_REG);
+@@ -1495,7 +1499,7 @@ static void smc_phy_configure ()
+ 			break;
+ 		}
+ 
+-		smc_wait_ms (500);	/* wait 500 millisecs */
++		smc_wait_ms (10);	/* wait 10 millisecs */
+ 
+ 		/* Restart auto-negotiation if remote fault */
+ 		if (status & PHY_STAT_REM_FLT) {
+Index: u-boot-1.2.0/drivers/smc91111.h
+===================================================================
+--- u-boot-1.2.0.orig/drivers/smc91111.h
++++ u-boot-1.2.0/drivers/smc91111.h
+@@ -99,7 +99,7 @@ typedef unsigned long int 		dword;
+ 	else ___v &= 0xff; \
+ 	___v; })
+ #else
+-#define	SMC_inl(r) 	(*((volatile dword *)(SMC_BASE_ADDRESS+(r))))
++#define	SMC_inl(r)	(*((volatile dword *)(SMC_BASE_ADDRESS+(r))))
+ #define	SMC_inw(r) 	(*((volatile word *)(SMC_BASE_ADDRESS+(r))))
+ #define SMC_inb(p)	({ \
+ 	unsigned int __p = (unsigned int)(SMC_BASE_ADDRESS + (p)); \

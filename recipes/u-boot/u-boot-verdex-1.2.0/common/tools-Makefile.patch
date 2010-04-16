@@ -1,0 +1,19 @@
+--- u-boot-1.2.0/tools/Makefile.orig	2010-02-04 16:40:54.193583666 -0800
++++ u-boot-1.2.0/tools/Makefile	2010-02-04 16:42:22.405105962 -0800
+@@ -57,7 +57,7 @@
+ HOSTOS := $(shell uname -s | tr A-Z a-z | \
+ 	sed -e 's/\(cygwin\).*/cygwin/')
+ 
+-TOOLSUBDIRS =
++TOOLSUBDIRS = env
+ 
+ HOST_CFLAGS = -Wall -pedantic
+ HOST_LDFLAGS =
+@@ -155,6 +155,7 @@
+ else
+ 		@for dir in $(TOOLSUBDIRS) ; do \
+ 		    $(MAKE) \
++			CROSS_COMPILE=$(CROSS_COMPILE) \
+ 			HOSTOS=$(HOSTOS) \
+ 			HOSTARCH=$(HOSTARCH) \
+ 			HOST_CFLAGS="$(HOST_CFLAGS)" \

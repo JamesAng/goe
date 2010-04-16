@@ -1,0 +1,11 @@
+--- u-boot-1.2.0/common/cmd_autoscript.c.orig	2010-02-04 12:05:53.425105810 -0800
++++ u-boot-1.2.0/common/cmd_autoscript.c	2010-02-04 12:06:41.477105895 -0800
+@@ -110,7 +110,7 @@
+ 		return 1;
+ 	}
+ 
+-	while (*len_ptr++);
++	do { len_ptr++; } while (!(*len_ptr));
+ 
+ 	/* make sure cmd is null terminated */
+ 	memmove (cmd, (char *)len_ptr, len);
