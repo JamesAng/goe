@@ -1,0 +1,13 @@
+Index: u-boot-1.2.0/include/configs/gumstix.h
+===================================================================
+--- u-boot-1.2.0.orig/include/configs/gumstix.h	2010-04-16 14:37:31.255915745 -0700
++++ u-boot-1.2.0/include/configs/gumstix.h	2010-04-16 14:38:04.996415780 -0700
+@@ -318,7 +318,7 @@
+ #define CFG_GPCR2_VAL		0x00010000
+ #define CFG_GPCR3_VAL		0x00000800
+ 
+-#define CFG_GPDR0_VAL		0xC182BA18
++#define CFG_GPDR0_VAL		0xC1829218
+ #define CFG_GPDR1_VAL		0x0012AAA1
+ #define CFG_GPDR2_VAL		0x00010000
+ #define CFG_GPDR3_VAL		0x00014800

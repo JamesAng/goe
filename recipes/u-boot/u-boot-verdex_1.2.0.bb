@@ -31,7 +31,7 @@ SRC_URI_append_gumstix-verdex = " \
 	file://common/smc91x-multi.patch;patch=1 \
 	file://verdex/base.patch;patch=1 \
 	file://verdex/smc911x-driver.patch;patch=1 \
-	file://verdex/use-smc91C111-for-now.patch;patch=1 \
+        file://verdex/gpio11_gpio13.patch;patch=1 \
 	file://common/env-Makefile.patch;patch=1 \
 	file://common/tools-Makefile.patch;patch=1 \
 	"
