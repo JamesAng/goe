@@ -38,6 +38,7 @@ SRC_URI_append_gumstix-verdex = " \
 
 # just set the variable manually
 GUMSTIX_400MHZ="y"
+#GUMSTIX_600MHZ="y"
 
 def gumstix_mhz(d):
 	import bb
@@ -45,9 +46,9 @@ def gumstix_mhz(d):
 	if 'y' == m:
 		return '400'
 	else:
-		return '200'
+		return '600'
 
-EXTRA_OEMAKE_gumstix-verdex = "CROSS_COMPILE=${TARGET_PREFIX} GUMSTIX_400MHZ=${GUMSTIX_400MHZ}"
+EXTRA_OEMAKE_gumstix-verdex = "CROSS_COMPILE=${TARGET_PREFIX} ${@base_conditional('GUMSTIX_400MHZ', 'y', 'GUMSTIX_400MHZ=y', 'GUMSTIX_600MHZ=y', d)}"
 TARGET_LDFLAGS = ""
 
 UBOOT_IMAGE_gumstix-verdex = "u-boot-${MACHINE}-${@gumstix_mhz(d)}Mhz-${PV}-${PR}.bin"

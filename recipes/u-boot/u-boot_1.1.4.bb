@@ -53,7 +53,7 @@ TARGET_LDFLAGS = ""
 UBOOT_MACHINE_dht-walnut = "walnut_config"
 UBOOT_MACHINE_atngw100 = "atngw_config"
 
-def gumstix_mhz(d):
+def gumstix_mhz_old(d):
 	import bb
         m = bb.data.getVar('GUMSTIX_400MHZ', d, 1)
 	if 'y' == m:
@@ -61,7 +61,7 @@ def gumstix_mhz(d):
 	else:
 		return '200'
 
-UBOOT_IMAGE_gumstix = "u-boot-${MACHINE}-${@gumstix_mhz(d)}Mhz-${PV}-${PR}.bin"
+UBOOT_IMAGE_gumstix = "u-boot-${MACHINE}-${@gumstix_mhz_old(d)}Mhz-${PV}-${PR}.bin"
 
 inherit base
 
