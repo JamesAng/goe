@@ -430,14 +430,14 @@ index e69de29..9359cb3 100644
 +	return;
 +}
 +
-+int __init gumstix_get_cf_cards(void)
++int gumstix_get_cf_cards(void)
 +{
 +	return pcmcia_cf_nr;
 +}
 +EXPORT_SYMBOL(gumstix_get_cf_cards);
 +
 +#ifdef CONFIG_MACH_GUMSTIX_VERDEX
-+int __init gumstix_check_if_netCF_vx(void)
++int gumstix_check_if_netCF_vx(void)
 +{
 +	return net_cf_vx_mode;
 +}

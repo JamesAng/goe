@@ -174,10 +174,10 @@ index e69de29..2877a8a 100644
 +
 +static struct platform_device *gumstix_pcmcia_device;
 +
-+extern int __init gumstix_get_cf_cards(void);
++extern int gumstix_get_cf_cards(void);
 +
 +#ifdef CONFIG_MACH_GUMSTIX_VERDEX
-+extern int __init gumstix_check_if_netCF_vx(void);
++extern int gumstix_check_if_netCF_vx(void);
 +#endif
 +
 +static int __init gumstix_pcmcia_init(void)
