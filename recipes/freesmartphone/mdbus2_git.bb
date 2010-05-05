@@ -5,14 +5,11 @@ SECTION = "console/network"
 LICENSE = "GPLv2"
 DEPENDS = "glib-2.0 dbus dbus-glib"
 SRCREV = "${FSO_CORNUCOPIA_SRCREV}"
-PV = "2.0.0+gitr${SRCREV}"
+PV = "2.0.0+gitr${SRCPV}"
 PR = "r0"
+PE = "1"
 
 SRC_URI = "${FREESMARTPHONE_GIT}/cornucopia.git;protocol=git;branch=master"
 S = "${WORKDIR}/git/tools/mdbus2"
 
-do_stage() {
-	:
-}
-
-inherit autotools_stage vala
+inherit autotools vala

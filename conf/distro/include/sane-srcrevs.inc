@@ -2,6 +2,6 @@
 # only SRCREVs included in more recipes should be here, otherwise put sane SRCREV to recipe directly
 
 OPKG_SRCREV ?= "527"
-EFL_SRCREV ?= "47713"
-FSO_CORNUCOPIA_SRCREV ?= "32e7e15e1a33aee9fa4830d8919e2bb9bb3eae1f"
+EFL_SRCREV ?= "48439"
+FSO_CORNUCOPIA_SRCREV ?= "d2189d3f54331fb79a1ca31d6fafe2e8eb2afe46"
 FSO_PYTHONHELPERS_SRCREV ?= "63b1dff1bc8ac22efabcee8a90e957c3b2423317"

@@ -119,8 +119,12 @@ fakeroot do_rootfs () {
 	mkdir -p ${IMAGE_ROOTFS}
 	mkdir -p ${DEPLOY_DIR_IMAGE}
 
+	mkdir -p ${IMAGE_ROOTFS}/etc
+
 	if [ "${USE_DEVFS}" != "1" ]; then
+		rm -rf ${IMAGE_ROOTFS}/etc/device_table
 		for devtable in ${@get_devtable_list(d)}; do
+			cat $devtable >> ${IMAGE_ROOTFS}/etc/device_table
 			makedevs -r ${IMAGE_ROOTFS} -D $devtable
 		done
 	fi
@@ -256,7 +260,9 @@ if [ -e ${IMAGE_ROOTFS}/usr/bin/opkg-cl ] ; then
 
 	cat /tmp/wanted-locale-packages /tmp/available-locale-packages | sort | uniq -d > /tmp/pending-locale-packages
 
-	cat /tmp/pending-locale-packages | xargs ${OPKG} -nodeps install
+	if [ -s /tmp/pending-locale-packages ] ; then
+		cat /tmp/pending-locale-packages | xargs ${OPKG} -nodeps install
+	fi
 	rm -f ${IMAGE_ROOTFS}${libdir}/opkg/lists/*
 
     for i in ${IMAGE_ROOTFS}${libdir}/opkg/info/*.preinst; do
